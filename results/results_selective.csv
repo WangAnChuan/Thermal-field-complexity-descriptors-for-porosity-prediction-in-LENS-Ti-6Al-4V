@@ -1,0 +1,13 @@
+feat,coverage,miss_rate,false_alarm
+base,0.2,0.0,0.0
+base,0.4,0.0,0.0
+base,0.6,0.0,0.0
+base,0.8,0.0,0.0
+base,0.9,0.0,0.0
+base,1.0,0.25,0.003976143141153081
+entropy+gradient,0.2,0.0,0.0
+entropy+gradient,0.4,0.0,0.0
+entropy+gradient,0.6,0.0,0.0
+entropy+gradient,0.8,0.0,0.0
+entropy+gradient,0.9,0.0,0.0
+entropy+gradient,1.0,0.2,0.0019880715705765406

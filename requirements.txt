@@ -1,0 +1,20 @@
+# Python 3.12
+numpy==2.5.3
+pandas==2.3.3
+scipy==1.18.1
+scikit-learn==1.9.1
+xgboost==3.4.1
+lightgbm==4.7.0
+catboost==1.2.10
+tabpfn==9.1.0
+imbalanced-learn==0.14.2
+shap==0.52.0
+matplotlib==3.11.2
+pyarrow>=15.0.0
+openpyxl>=3.1.0
+pytest>=8.0
+
+# CPU-only PyTorch. Install with:
+#   pip install torch==2.13.0 --index-url https://download.pytorch.org/whl/cpu
+torch==2.13.0
+torchvision==0.28.0

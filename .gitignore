@@ -1,0 +1,27 @@
+# Data (download with data/download.sh; not redistributed)
+data/cache/
+data/*.zip
+data/*.xlsx
+data/cropped_thinwall_CSV_pyrometer/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# LaTeX build artefacts
+paper/*.aux
+paper/*.bbl
+paper/*.blg
+paper/*.log
+paper/*.out
+paper/*.spl
+
+# Figures are small and tracked; results tables are tracked deliberately.

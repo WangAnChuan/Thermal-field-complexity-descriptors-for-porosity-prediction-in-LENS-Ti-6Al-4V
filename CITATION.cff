@@ -1,0 +1,31 @@
+cff-version: 1.2.0
+message: "If you use this code, please cite the paper and the original dataset."
+title: "Thermal-field complexity descriptors for porosity prediction in laser engineered net shaping"
+abstract: >-
+  Reference implementation and experiment code for a study on porosity prediction from melt-pool
+  pyrometry in LENS Ti-6Al-4V thin walls, using the public dataset of Zamiela et al. (2023).
+authors:
+  - family-names: "First"
+    given-names: "Author"
+  - family-names: "Second"
+    given-names: "Author"
+  - family-names: "Third"
+    given-names: "Author"
+repository-code: "https://github.com/WangAnChuan/Thermal-field-complexity-descriptors-for-porosity-prediction-in-LENS-Ti-6Al-4V"
+license: MIT
+references:
+  - type: dataset
+    title: "Thermal-porosity characterization data of additively manufactured Ti-6Al-4V thin-walled structure via laser engineered net shaping"
+    authors:
+      - family-names: "Zamiela"
+        given-names: "Christian"
+      - family-names: "Tian"
+        given-names: "Wenmeng"
+      - family-names: "Guo"
+        given-names: "Shenghan"
+      - family-names: "Bian"
+        given-names: "Linkan"
+    year: 2023
+    doi: "10.7910/DVN/BWHYEH"
+    publisher:
+      name: "Harvard Dataverse"

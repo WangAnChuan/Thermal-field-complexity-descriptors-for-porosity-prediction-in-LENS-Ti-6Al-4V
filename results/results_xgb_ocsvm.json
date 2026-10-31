@@ -1,0 +1,121 @@
+{
+ "xgb": [
+  {
+   "fold": 1,
+   "params": {
+    "max_depth": 4,
+    "learning_rate": 0.1,
+    "n_estimators": 600
+   },
+   "pr_auc": 1.0,
+   "roc_auc": 1.0,
+   "rec_fpr5": 1.0,
+   "prec_fpr5": 0.23809523809523808
+  },
+  {
+   "fold": 2,
+   "params": {
+    "max_depth": 4,
+    "learning_rate": 0.05,
+    "n_estimators": 600
+   },
+   "pr_auc": 0.95,
+   "roc_auc": 0.9991935483870968,
+   "rec_fpr5": 1.0,
+   "prec_fpr5": 0.2
+  },
+  {
+   "fold": 3,
+   "params": {
+    "max_depth": 3,
+    "learning_rate": 0.1,
+    "n_estimators": 600
+   },
+   "pr_auc": 0.8627416309003263,
+   "roc_auc": 0.9901564866229178,
+   "rec_fpr5": 1.0,
+   "prec_fpr5": 0.6511627906976745
+  },
+  {
+   "fold": 4,
+   "params": {
+    "max_depth": 3,
+    "learning_rate": 0.1,
+    "n_estimators": 300
+   },
+   "pr_auc": 0.7901237737515838,
+   "roc_auc": 0.9824561403508772,
+   "rec_fpr5": 0.9642857142857143,
+   "prec_fpr5": 0.6428571428571429
+  },
+  {
+   "fold": 5,
+   "params": {
+    "max_depth": 4,
+    "learning_rate": 0.1,
+    "n_estimators": 600
+   },
+   "pr_auc": 0.9761904761904762,
+   "roc_auc": 0.999457111834962,
+   "rec_fpr5": 1.0,
+   "prec_fpr5": 0.2727272727272727
+  }
+ ],
+ "ocsvm": [
+  {
+   "fold": 1,
+   "params": {
+    "nu": 0.01,
+    "gamma": 0.02
+   },
+   "pr_auc": 0.8166666666666667,
+   "roc_auc": 0.9941558441558441,
+   "rec_fpr5": 1.0,
+   "prec_fpr5": 0.23809523809523808
+  },
+  {
+   "fold": 2,
+   "params": {
+    "nu": 0.01,
+    "gamma": 0.02
+   },
+   "pr_auc": 0.8166666666666667,
+   "roc_auc": 0.996774193548387,
+   "rec_fpr5": 1.0,
+   "prec_fpr5": 0.2
+  },
+  {
+   "fold": 3,
+   "params": {
+    "nu": 0.01,
+    "gamma": 0.02
+   },
+   "pr_auc": 0.621647191588983,
+   "roc_auc": 0.9644119131751641,
+   "rec_fpr5": 0.8928571428571429,
+   "prec_fpr5": 0.625
+  },
+  {
+   "fold": 4,
+   "params": {
+    "nu": 0.03,
+    "gamma": 0.02
+   },
+   "pr_auc": 0.6851999206253678,
+   "roc_auc": 0.9446115288220551,
+   "rec_fpr5": 0.6785714285714286,
+   "prec_fpr5": 0.5588235294117647
+  },
+  {
+   "fold": 5,
+   "params": {
+    "nu": 0.01,
+    "gamma": 0.05
+   },
+   "pr_auc": 0.8533333333333334,
+   "roc_auc": 0.9761129207383279,
+   "rec_fpr5": 0.8333333333333334,
+   "prec_fpr5": 0.23809523809523808
+  }
+ ]
+}
