@@ -1,8 +1,7 @@
 # Thermal-field complexity descriptors for porosity prediction in LENS Ti–6Al–4V
 
-Reference code and experiment pipeline for the paper *"Thermal-field complexity rather than peak
-temperature governs porosity in laser engineered net shaping: a protocol-aware evaluation on a
-public Ti–6Al–4V dataset"*.
+Experiment code and results for porosity prediction from melt-pool pyrometry in laser engineered
+net shaping (LENS) of Ti–6Al–4V thin walls, using a public dataset.
 
 The study asks a simple question: **which conclusions survive when a porosity model is evaluated
 along the build direction instead of on a random split?** Using the public LENS thin-wall dataset
@@ -74,7 +73,6 @@ on this dataset, the same descriptors are *worse* than conventional summary stat
 ├── tests/test_claims.py         # regression tests: every reported number
 ├── results/                     # generated tables (tracked, small)
 ├── figures/                     # generated figures
-├── paper/                       # manuscript source (elsarticle)
 ├── Makefile
 └── requirements.txt
 ```
@@ -94,8 +92,8 @@ bash data/download.sh          # ~52 MB from Harvard Dataverse
 make all                       # ~35 min on 4 CPU cores, no GPU required
 ```
 
-`make all` ends with `tests/test_claims.py`, which asserts that every number quoted in the paper
-still matches the generated result files. If a refactor changes any reported value, the test fails.
+`make all` ends with `tests/test_claims.py`, which asserts that every headline number still matches
+the generated result files. If a refactor changes any reported value, the test fails.
 
 Run a single stage:
 
@@ -124,8 +122,8 @@ Two bootstrap procedures are reported and they answer different questions:
 - **split-level** (resample the test splits): is the gain consistently positive across splits?
 - **layer-level** (resample whole layers): does the gain transfer to unseen layers?
 
-The paper reports the first and explains the distinction; the second gives p ≈ 0.05 and is the
-more conservative statement.
+The split-level test is the one reported in the headline table; the layer-level test gives
+p ≈ 0.05 and is the more conservative statement.
 
 ---
 
@@ -147,7 +145,7 @@ mean |SHAP| (0.269) behind entropy (2.593).
 - All random seeds are fixed; no stage of the pipeline is stochastic beyond the declared seeds.
 - Independent re-runs reproduce every table bit-for-bit (differences < 1e-6; the only varying
   column is wall-clock runtime).
-- Versions used for the paper: Python 3.12.3, numpy 2.5.3, scikit-learn 1.9.1, XGBoost 3.4.1,
+- Versions used: Python 3.12.3, numpy 2.5.3, scikit-learn 1.9.1, XGBoost 3.4.1,
   LightGBM 4.7.0, CatBoost 1.2.10, TabPFN 9.1.0, PyTorch 2.13.0+cpu.
 - The CNN baseline stops at the epoch that maximises PR-AUC on validation layers held out from the
   training portion. The test fold is never used for model selection. An earlier version of this
@@ -170,7 +168,7 @@ mean |SHAP| (0.269) behind entropy (2.593).
 
 ## Citation
 
-If you use this code, please cite the paper and the original dataset:
+If you use this code, please cite the original dataset:
 
 ```bibtex
 @dataset{zamiela2023thermal,
@@ -181,8 +179,6 @@ If you use this code, please cite the paper and the original dataset:
   doi    = {10.7910/DVN/BWHYEH}
 }
 ```
-
-See `CITATION.cff` for the software entry.
 
 ## License
 

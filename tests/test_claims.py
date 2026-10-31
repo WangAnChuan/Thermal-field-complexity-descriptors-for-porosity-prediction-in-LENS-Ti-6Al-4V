@@ -1,4 +1,4 @@
-"""Regression tests: every headline number in the paper must match a result file.
+"""Regression tests: every headline result must match a generated file.
 
 Run directly (`python tests/test_claims.py`) or with pytest.
 Any drift in a reported number fails the test.

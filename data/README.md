@@ -1,6 +1,6 @@
 # Data
 
-This directory holds the public dataset used in the paper. It is **not** redistributed here;
+This directory holds the public dataset used by these experiments. It is **not** redistributed here;
 `download.sh` fetches it from Harvard Dataverse.
 
 ## Source

@@ -1,4 +1,4 @@
-"""Generate the six manuscript figures at the journal text width (5.42 in)."""
+"""Generate the six result figures at a compact single-column width."""
 
 import os, sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))

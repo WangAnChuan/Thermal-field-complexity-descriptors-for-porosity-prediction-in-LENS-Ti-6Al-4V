@@ -1,9 +1,10 @@
 cff-version: 1.2.0
-message: "If you use this code, please cite the paper and the original dataset."
+message: "If you use this code, please cite the original dataset."
 title: "Thermal-field complexity descriptors for porosity prediction in laser engineered net shaping"
 abstract: >-
-  Reference implementation and experiment code for a study on porosity prediction from melt-pool
-  pyrometry in LENS Ti-6Al-4V thin walls, using the public dataset of Zamiela et al. (2023).
+  Experiment code for porosity prediction from melt-pool pyrometry in LENS Ti-6Al-4V thin walls,
+  evaluated under layer-grouped and forward-chaining protocols on the public dataset of
+  Zamiela et al. (2023).
 authors:
   - family-names: "First"
     given-names: "Author"

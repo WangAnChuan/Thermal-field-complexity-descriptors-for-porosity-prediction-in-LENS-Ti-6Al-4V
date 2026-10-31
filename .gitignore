@@ -16,12 +16,4 @@ venv/
 .DS_Store
 Thumbs.db
 
-# LaTeX build artefacts
-paper/*.aux
-paper/*.bbl
-paper/*.blg
-paper/*.log
-paper/*.out
-paper/*.spl
-
 # Figures are small and tracked; results tables are tracked deliberately.
