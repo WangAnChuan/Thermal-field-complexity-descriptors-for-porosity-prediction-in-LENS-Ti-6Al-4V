@@ -132,6 +132,15 @@ def check_all():
     held = float(_e('E3', 'Cat', '+EG')['mean']) - float(_e('E3', 'Cat', 'base')['mean'])
     ck('E3 held-out layers show a positive gain', held > 0.05, f'{held:+.3f}')
 
+    # Entropy is not redundant with conventional statistics
+    ent = _load('results_entropy_robustness.csv')
+    def _g(model, extra):
+        return float(ent[(ent.model == model) & (ent['extra'] == extra)]['gain'].iloc[0])
+    ck('entropy adds more than std+area', _g('Cat', 'entropy') > 2 * _g('Cat', 'std+area'),
+       f"entropy {_g('Cat','entropy'):+.3f} vs std+area {_g('Cat','std+area'):+.3f}")
+    ck('entropy retains an increment given std+area', _g('Cat', 'entropy|std+area') > 0.03,
+       f"{_g('Cat','entropy|std+area'):+.3f}")
+
     # CNN baseline
     ck('CNN five-seed means 0.707 / 0.615',
        abs(cnn['grouped']['mean']-0.707) < 2e-3 and abs(cnn['forward']['mean']-0.615) < 2e-3,
