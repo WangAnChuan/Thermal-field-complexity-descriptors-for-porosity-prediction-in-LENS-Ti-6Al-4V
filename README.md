@@ -69,7 +69,8 @@ on this dataset, the same descriptors are *worse* than conventional summary stat
 │   ├── 14_cnn.py
 │   ├── 15_figures.py
 │   ├── 16_controls.py           # permutation / projection / moment controls
-│   └── 17_controls_paired.py    # complexity vs moments, 21 splits
+│   ├── 17_controls_paired.py    # complexity vs moments, 21 splits
+│   └── 18_protocol_position_holdout.py  # protocol, positional ablation, held-out layers
 ├── tests/test_claims.py         # regression tests: every reported number
 ├── results/                     # generated tables (tracked, small)
 ├── figures/                     # generated figures

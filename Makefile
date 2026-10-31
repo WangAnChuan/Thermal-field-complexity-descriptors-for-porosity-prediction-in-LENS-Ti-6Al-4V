@@ -3,9 +3,9 @@
 
 PY ?= python
 
-.PHONY: all data baselines protocols ablations stability robustness reproduction uncertainty interpretability controls cnn figures test clean
+.PHONY: all data baselines protocols ablations stability robustness reproduction uncertainty interpretability controls protocol_position cnn figures test clean
 
-all: data baselines protocols ablations stability robustness reproduction uncertainty interpretability controls cnn figures test
+all: data baselines protocols ablations stability robustness reproduction uncertainty interpretability controls protocol_position cnn figures test
 
 data:
 	$(PY) experiments/01_build_cache.py
@@ -38,6 +38,9 @@ uncertainty:
 interpretability:
 	$(PY) experiments/13a_shap.py
 	$(PY) experiments/13b_shap_excluding_first_layers.py
+
+protocol_position:
+	$(PY) experiments/18_protocol_position_holdout.py
 
 controls:
 	$(PY) experiments/16_controls.py

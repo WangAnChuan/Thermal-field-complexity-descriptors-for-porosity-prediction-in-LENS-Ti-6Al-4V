@@ -31,7 +31,7 @@ def check_all():
     shap_imp = pd.read_csv(os.path.join(RES, 'shap_importance.csv'), index_col=0).iloc[:, 0]
     bins = _load('shap_bins.csv')
     uq = json.load(open(os.path.join(RES, 'results_uq.json')))
-    cnn = json.load(open(os.path.join(RES, 'results_cnn_corrected.json')))
+    cnn = json.load(open(os.path.join(RES, 'results_cnn_multiseed.json')))
 
     out = []
     def ck(name, cond, detail=''):
@@ -117,10 +117,25 @@ def check_all():
        abs(paired['complexity'].mean()-0.9742) < 3e-3 and abs(paired['moments'].mean()-0.9467) < 3e-3,
        f"complexity {paired['complexity'].mean():.4f} vs moments {paired['moments'].mean():.4f}")
 
+    # Protocol dependence on identical features
+    e = _load('results_e1_e4.csv')
+    def _e(exp, model, cond):
+        return e[(e.experiment == exp) & (e.model == model) & (e.condition == cond)].iloc[0]
+    rnd = float(_e('E2', 'XGB', '+EG')['mean']) - float(_e('E2', 'XGB', 'base')['mean'])
+    fwd = float(_e('E1', 'XGB', 'with-position, +EG')['mean']) - float(_e('E1', 'XGB', 'with-position, base')['mean'])
+    ck('E2 forward gain exceeds random gain', fwd > 2 * rnd, f'forward {fwd:+.3f} vs random {rnd:+.3f}')
+    ck('E2 random-split gain is small but positive', 0 < rnd < 0.03, f'{rnd:+.4f}')
+    nopos = float(_e('E1', 'Cat', 'no-position, +EG')['mean']) - float(_e('E1', 'Cat', 'no-position, base')['mean'])
+    wpos = float(_e('E1', 'Cat', 'with-position, +EG')['mean']) - float(_e('E1', 'Cat', 'with-position, base')['mean'])
+    ck('E1 gain survives removing positional features', nopos > 0.8 * wpos,
+       f'no-position {nopos:+.3f} vs with-position {wpos:+.3f}')
+    held = float(_e('E3', 'Cat', '+EG')['mean']) - float(_e('E3', 'Cat', 'base')['mean'])
+    ck('E3 held-out layers show a positive gain', held > 0.05, f'{held:+.3f}')
+
     # CNN baseline
-    ck('CNN corrected 0.777 / 0.688',
-       abs(cnn['group5']['pr']-0.777) < 2e-3 and abs(cnn['forward']['pr']-0.688) < 2e-3,
-       f"{cnn['group5']['pr']:.3f} / {cnn['forward']['pr']:.3f}")
+    ck('CNN five-seed means 0.707 / 0.615',
+       abs(cnn['grouped']['mean']-0.707) < 2e-3 and abs(cnn['forward']['mean']-0.615) < 2e-3,
+       f"{cnn['grouped']['mean']:.3f} / {cnn['forward']['mean']:.3f}")
     return out
 
 
