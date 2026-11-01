@@ -18,6 +18,11 @@ def _row(df, **kw):
         m &= (df[k] == v)
     return df[m].iloc[0]
 
+def _ledger():
+    import json
+    return json.load(open(os.path.join(RES, 'numbers_ledger.json')))
+
+
 def check_all():
     combo = _load('results_combo.csv')
     abl = _load('results_ablation.csv')
