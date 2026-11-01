@@ -56,7 +56,7 @@ cnn:
 	$(PY) experiments/14_cnn.py
 
 figures:
-	$(PY) experiments/15_figures.py
+	$(PY) experiments/21_figures.py
 
 test:
 	$(PY) tests/test_claims.py
