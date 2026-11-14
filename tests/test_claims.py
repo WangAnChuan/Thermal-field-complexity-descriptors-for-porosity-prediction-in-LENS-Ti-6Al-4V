@@ -146,6 +146,58 @@ def check_all():
     ck('entropy retains an increment given std+area', _g('Cat', 'entropy|std+area') > 0.03,
        f"{_g('Cat','entropy|std+area'):+.3f}")
 
+    # Pool geometry: the published physics feature family
+    gv = _load('results_geometry_eval.csv')
+    def _gv(model, feats):
+        return float(gv[(gv.model == model) & (gv.feats == feats)]['forward'].iloc[0])
+    ck('G1 geometry adds nothing under forward chaining',
+       _gv('Cat', 'geo') - _gv('Cat', 'base') < 0.03 and _gv('XGB', 'geo') < _gv('XGB', 'base'),
+       f"Cat {_gv('Cat','base'):.3f}->{_gv('Cat','geo'):.3f}, "
+       f"XGB {_gv('XGB','base'):.3f}->{_gv('XGB','geo'):.3f}")
+    ck('G2 descriptors still reach 0.974 / 0.950 with geometry available',
+       abs(_gv('Cat', 'ours') - 0.974) < 2e-3 and abs(_gv('XGB', 'ours') - 0.950) < 2e-3,
+       f"{_gv('Cat','ours'):.4f} / {_gv('XGB','ours'):.4f}")
+    ck('G3 adding geometry next to the descriptors does not help',
+       _gv('Cat', 'geo+ours') < _gv('Cat', 'ours'),
+       f"both {_gv('Cat','geo+ours'):.3f} < ours {_gv('Cat','ours'):.3f}")
+
+    gc = pd.read_csv(os.path.join(RES, 'results_geometry_corr_full.csv'), index_col=0)
+    ck('G4 geometry reproduces the released melt-pool fields',
+       gc.loc['geo_area', 'MP_Area'] > 0.95 and gc.loc['geo_ar', 'MP_Ecc'] > 0.85,
+       f"area~MP_Area {gc.loc['geo_area','MP_Area']:.2f}, ar~MP_Ecc {gc.loc['geo_ar','MP_Ecc']:.2f}")
+
+    # Protocol transfer ratio
+    pt = _load('results_ptr.csv')
+    def _p(model, block, mask='仅≥12层'):
+        return pt[(pt['mask'] == mask) & (pt.model == model) & (pt.block == block)].iloc[0]
+    pc = _p('Cat', 'complexity')
+    ck('P1 CatBoost complexity PTR 2.51 [1.64, 4.95]',
+       abs(pc.ptr - 2.51) < 0.02 and abs(pc.ptr_ci_lo - 1.64) < 0.05 and abs(pc.ptr_ci_hi - 4.95) < 0.1,
+       f'{pc.ptr:.2f} [{pc.ptr_ci_lo:.2f}, {pc.ptr_ci_hi:.2f}]')
+
+    gate = _load('results_ptr_gate.csv')
+    def _g(block):
+        return gate[gate.block == block].iloc[0]
+    ck('P2 permutation gate admits the descriptors',
+       _g('complexity').pass_gate and _g('complexity').p_value <= 0.033,
+       f"p = {_g('complexity').p_value:.3f}")
+    ck('P3 gate rejects every control block',
+       not any(_g(b).pass_gate for b in ('moments', 'randproj', 'permuted')),
+       ', '.join(f"{b} p={_g(b).p_value:.2f}" for b in ('moments', 'randproj', 'permuted')))
+    ck('P4 gate admits the two gradient statistics',
+       _g('grad').pass_gate and abs(_g('grad').d_rand - 0.0245) < 0.003,
+       f"p = {_g('grad').p_value:.3f}, d_rand = {_g('grad').d_rand:+.4f}")
+
+    # Estimator calibration on synthetic data
+    cal = _load('results_ptr_calibration.csv')
+    null = cal[cal.omega == 1].ptr
+    ck('P5 synthetic null is centred near one', abs(null.mean() - 0.94) < 0.12,
+       f'{null.mean():.2f} ± {null.std():.2f} (n={len(null)})')
+    mono = cal.groupby('omega').ptr.mean()
+    ck('P6 PTR is monotone in the true differential effect',
+       bool(np.all(np.diff(mono.values) > -0.02)),
+       ', '.join(f'ω={o}: {v:.2f}' for o, v in mono.items()))
+
     # CNN baseline
     ck('CNN five-seed means 0.707 / 0.615',
        abs(cnn['grouped']['mean']-0.707) < 2e-3 and abs(cnn['forward']['mean']-0.615) < 2e-3,

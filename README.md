@@ -38,6 +38,37 @@ nothing (p = 0.30).
 on this dataset, the same descriptors are *worse* than conventional summary statistics
 (F1 0.872 vs 0.895). They help only when the model has to extrapolate.
 
+**The transfer can be measured.** The protocol transfer ratio is the forward-chained gain divided
+by the random-split gain, reported only when the denominator clears a permutation gate
+(30 label permutations, p ≤ 0.05). A naive t-test across splits is not valid here: the splits reuse
+the same frames, and on synthetic null data it admits 17% of blocks against a nominal 2.5%, while
+the permutation gate admits 6.7%. On the aligned pore population (layers ≥ 12), CatBoost:
+
+| Added block | Δ random | Δ forward | PTR | p (perm) |
+|---|---|---|---|---|
+| Complexity descriptors | +0.060 | +0.151 | **2.51** [1.64, 4.95] | < 0.032 |
+| Gradient statistics (2) | +0.025 | +0.088 | 3.51 | < 0.032 |
+| Entropy (1) | +0.069 | +0.102 | 1.48 [0.82, 3.10] | < 0.032 |
+| Generic moments | +0.011 | +0.064 | undefined | 0.39 |
+| Random projections | +0.012 | +0.031 | undefined | 0.07 |
+| Permuted descriptors | −0.009 | +0.007 | undefined | 0.65 |
+
+Calibration on synthetic data with a known ground truth: when the effect is identical in every
+layer the same pipeline returns PTR = 0.94 ± 0.21, and it rises monotonically (1.00, 1.05, 1.11) as
+the true differential effect grows two-, three- and five-fold — compressed by AP saturation, so
+read PTR as an ordinal statistic rather than as the multiplier itself.
+
+Every control block has a non-zero forward increment, so a bare comparison across protocols would
+credit noise with transferring. Ten shuffled copies give +0.017 ± 0.009 against +0.151 observed.
+
+**The published physics features do not transfer.** Melt-pool geometry rebuilt from the Ti–6Al–4V
+liquidus (1660 °C) and solidus (1600 °C) isotherms — length, width, aspect ratio, area, perimeter,
+circularity, solidity, mushy-zone ratio, solidification-front gradient, trailing asymmetry, peak
+offset — reproduces the dataset's own *melt-pool area* at ρ = 0.97–0.99 and *eccentricity* at
+ρ = 0.90. Added explicitly it contributes +0.010 PR-AUC for CatBoost and −0.076 for XGBoost under
+forward chaining, and it cannot reconstruct entropy or the mean gradient (cross-validated R² < 0).
+The descriptors describe the field around the pool, not the pool outline.
+
 ---
 
 ## Repository layout
@@ -50,6 +81,8 @@ on this dataset, the same descriptors are *worse* than conventional summary stat
 ├── src/
 │   ├── features.py              # 18 baseline features
 │   ├── features_spatial.py      # 21 physics-inspired spatial descriptors
+│   ├── features_geometry.py     # 11 melt-pool geometry features at the solidification isotherms
+│   ├── ptr.py                   # protocol transfer ratio: scoring, bootstrap, identifiability
 │   └── features_temporal.py     # 11 temporal features (supplementary ablation only)
 ├── experiments/
 │   ├── 01_build_cache.py        # CSV frames -> thermal.npy + labels.parquet
@@ -70,7 +103,16 @@ on this dataset, the same descriptors are *worse* than conventional summary stat
 │   ├── 15_figures.py
 │   ├── 16_controls.py           # permutation / projection / moment controls
 │   ├── 17_controls_paired.py    # complexity vs moments, 21 splits
-│   └── 18_protocol_position_holdout.py  # protocol, positional ablation, held-out layers
+│   ├── 18_protocol_position_holdout.py  # protocol, positional ablation, held-out layers
+│   ├── 19_entropy_robustness.py
+│   ├── 20_pore_size.py
+│   ├── 21_figures.py
+│   ├── 22_pool_geometry.py      # physics-informed geometry vs the descriptors
+│   ├── 23_protocol_transfer.py  # PTR across feature blocks
+│   ├── 24_ptr_permutation.py    # permutation null for the PTR experiment
+│   ├── 25_figure_geometry.py
+│   ├── 26_transfer_gate.py      # permutation gate for the PTR denominator
+│   └── 27_ptr_calibration.py    # estimator calibration on synthetic data
 ├── tests/test_claims.py         # regression tests: every reported number
 ├── results/                     # generated tables (tracked, small)
 ├── figures/                     # generated figures

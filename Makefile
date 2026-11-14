@@ -1,11 +1,12 @@
 # Full pipeline. Tested with Python 3.12 on a 4-core CPU (no GPU required).
-# Total runtime is roughly 35 minutes, dominated by the multi-seed study and the CNN.
+# Total runtime is roughly 60 minutes, dominated by the multi-seed study, the PTR permutation
+# null and the CNN.
 
 PY ?= python
 
-.PHONY: all data baselines protocols ablations stability robustness reproduction uncertainty interpretability controls protocol_position entropy_robustness pore_size cnn figures test clean
+.PHONY: all data baselines protocols ablations stability robustness reproduction uncertainty interpretability controls protocol_position entropy_robustness pore_size geometry transfer cnn figures test clean
 
-all: data baselines protocols ablations stability robustness reproduction uncertainty interpretability controls protocol_position entropy_robustness pore_size cnn figures test
+all: data baselines protocols ablations stability robustness reproduction uncertainty interpretability controls protocol_position entropy_robustness pore_size geometry transfer cnn figures test
 
 data:
 	$(PY) experiments/01_build_cache.py
@@ -48,6 +49,15 @@ pore_size:
 protocol_position:
 	$(PY) experiments/18_protocol_position_holdout.py
 
+geometry:
+	$(PY) experiments/22_pool_geometry.py
+
+transfer:
+	$(PY) experiments/23_protocol_transfer.py
+	$(PY) experiments/24_ptr_permutation.py
+	$(PY) experiments/26_transfer_gate.py
+	$(PY) experiments/27_ptr_calibration.py
+
 controls:
 	$(PY) experiments/16_controls.py
 	$(PY) experiments/17_controls_paired.py
@@ -57,6 +67,7 @@ cnn:
 
 figures:
 	$(PY) experiments/21_figures.py
+	$(PY) experiments/25_figure_geometry.py
 
 test:
 	$(PY) tests/test_claims.py

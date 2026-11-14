@@ -1,5 +1,7 @@
 # Data (download with data/download.sh; not redistributed)
 data/cache/
+# symlink created by the Makefile; points outside the repo
+data/cache
 data/*.zip
 data/*.xlsx
 data/cropped_thinwall_CSV_pyrometer/
