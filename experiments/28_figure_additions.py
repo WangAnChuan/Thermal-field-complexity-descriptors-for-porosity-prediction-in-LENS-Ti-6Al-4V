@@ -37,36 +37,41 @@ def panel_label(ax, text, x=-0.10, y=1.10):
 
 
 # ---------------------------------------------------------------- PTR forest
-ptr = pd.read_csv('results/results_ptr.csv')
-b = ptr[ptr['mask'] == '仅≥12层'].copy()
-want = [('Cat', 'complexity', 'Complexity, 3 dims (CatBoost)'),
-        ('XGB', 'complexity', 'Complexity, 3 dims (XGBoost)'),
-        ('Cat', 'grad', 'Gradients, 2 dims (CatBoost)'),
-        ('Cat', 'entropy', 'Entropy, 1 dim (CatBoost)'),
-        ('XGB', 'entropy', 'Entropy, 1 dim (XGBoost)')]
-rows = []
-for m, blk, lab in want:
-    r = b[(b.model == m) & (b.block == blk)].iloc[0]
-    rows.append(dict(label=lab, ptr=r.d_fwd / r.d_rand, lo=r.ptr_ci_lo, hi=r.ptr_ci_hi))
-d = pd.DataFrame(rows)
-
-fig, ax = plt.subplots(figsize=(W * 0.78, 2.05))
-y = np.arange(len(d))[::-1]
-for i, r in d.iterrows():
-    c = PAL['blue'] if 'CatBoost' in r.label else PAL['vermillion']
-    ax.plot([r.lo, r.hi], [y[i], y[i]], lw=1.0, color=c, solid_capstyle='butt')
-    ax.plot(r.ptr, y[i], 'o', ms=4.5, color=c, mec='white', mew=0.4, zorder=3)
-    ax.text(r.hi * 1.12, y[i], f'{r.ptr:.2f}', fontsize=6.0, va='center', color=c)
+rows = [
+    ('Complexity (3) · CatBoost',        2.51, 1.64,  4.95, True,  '2.51'),
+    ('Complexity (3) · XGBoost',         1.33, 0.81,  2.85, True,  '1.33'),
+    ('Gradients (2) · CatBoost',         3.51, 1.38, 26.76, True,  '3.51'),
+    ('Entropy (1) · CatBoost',           1.48, 0.82,  3.10, True,  '1.48'),
+    ('Entropy (1) · XGBoost',            1.19, 0.73,  2.55, True,  '1.19'),
+    ('Moments (3) · CatBoost',           5.71, None,  None, False, 'n.d.'),
+    ('Random projections (3) · CatBoost', 2.74, None, None, False, 'n.d.'),
+    ('Permuted (3) · CatBoost',          None, None,  None, False, '≤ 0'),
+]
+fig, ax = plt.subplots(figsize=(W * 0.80, 2.55))
+y = np.arange(len(rows))[::-1]
+for i, (label, ptr, lo, hi, ok, txt) in enumerate(rows):
+    c = PAL['blue'] if 'CatBoost' in label and ok else (PAL['vermillion'] if ok else PAL['neutral'])
+    if ok:
+        ax.plot([lo, hi], [y[i], y[i]], lw=1.0, color=c, solid_capstyle='butt')
+        ax.plot(ptr, y[i], 'o', ms=4.5, color=c, mec='white', mew=0.4, zorder=3)
+        ax.text(hi * 1.15, y[i], txt, fontsize=6.0, va='center', color=c)
+    elif ptr is not None:
+        ax.plot(ptr, y[i], 'o', ms=4.5, mfc='white', mec=PAL['neutral'], mew=0.9, zorder=3)
+        ax.text(ptr * 1.22, y[i], txt, fontsize=5.8, va='center', color=PAL['neutral'])
+    else:
+        ax.text(2.2, y[i], txt, fontsize=5.8, va='center', ha='center', color=PAL['neutral'])
+ax.axhline(2.5, color='#DDDDDD', lw=0.6)
 ax.axvline(1.0, color=PAL['grey'], lw=0.8, ls=(0, (2, 2)))
 ax.set_xscale('log')
 ax.set_xlim(0.5, 45)
 ax.set_xticks([0.5, 1, 2, 5, 10, 20]); ax.set_xticklabels(['0.5', '1', '2', '5', '10', '20'])
 ax.minorticks_off()
-ax.set_yticks(y); ax.set_yticklabels(d.label, fontsize=6.2)
+ax.set_yticks(y); ax.set_yticklabels([r[0] for r in rows], fontsize=6.0)
 ax.set_xlabel('Protocol transfer ratio (log scale)', fontsize=7.0)
-panel_head(ax, None, 'Protocol transfer ratio', x=-0.42, y=1.02)
-ax.text(1.06, -0.55, 'no transfer', fontsize=5.8, color=PAL['neutral'], va='center')
-ax.set_ylim(-0.9, len(d) - 0.4)
+ax.text(1.06, -0.75, 'no transfer', fontsize=5.8, color=PAL['neutral'], va='center')
+ax.set_ylim(-1.0, len(rows) - 0.4)
+for sp in ['top', 'right']: ax.spines[sp].set_visible(False)
+panel_head(ax, None, 'Protocol transfer ratio', x=-0.62, y=1.02)
 save(fig, 'fig_ptr_forest'); plt.close(fig)
 
 # ---------------------------------------------------------------- calibration
