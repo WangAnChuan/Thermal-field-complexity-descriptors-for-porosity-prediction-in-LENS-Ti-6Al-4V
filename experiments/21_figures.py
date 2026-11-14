@@ -18,8 +18,9 @@ import matplotlib as mpl
 from pathlib import Path
 
 mpl.rcParams.update({
-    'font.family': 'sans-serif',
-    'font.sans-serif': ['Arial', 'Helvetica', 'DejaVu Sans'],
+    'font.family': 'serif',
+    'font.serif': ['Times New Roman', 'Liberation Serif', 'Nimbus Roman', 'DejaVu Serif'],
+    'mathtext.fontset': 'stix',
     'svg.fonttype': 'none',
     'pdf.fonttype': 42,
     'ps.fonttype': 42,

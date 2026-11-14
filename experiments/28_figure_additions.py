@@ -13,7 +13,8 @@ from pathlib import Path
 PAL = {'neutral': '#6E6E6E', 'neutral_light': '#B8B8B8', 'blue': '#0072B2',
        'vermillion': '#D55E00', 'green': '#009E73', 'ink': '#222222', 'grey': '#8C8C8C'}
 mpl.rcParams.update({
-    'font.family': 'sans-serif', 'font.sans-serif': ['Arial', 'DejaVu Sans'],
+    'font.family': 'serif', 'font.serif': ['Times New Roman', 'Liberation Serif', 'Nimbus Roman', 'DejaVu Serif'],
+    'mathtext.fontset': 'stix',
     'pdf.fonttype': 42, 'font.size': 7.5, 'axes.titlesize': 7.5, 'axes.labelsize': 7.5,
     'xtick.labelsize': 7, 'ytick.labelsize': 7, 'legend.fontsize': 6.8,
     'axes.spines.right': False, 'axes.spines.top': False, 'axes.linewidth': 0.7,
