@@ -45,39 +45,52 @@ for f, (_, te) in enumerate(GroupKFold(n_splits=5).split(np.zeros((len(g_layers)
     for L in np.unique(g_layers[te]):
         fold_of[int(L)] = f
 
-fig = plt.figure(figsize=(W, 3.55))
-gs = GridSpec(3, 1, height_ratios=[1.0, 2.0, 2.3], hspace=0.62,
-              left=0.10, right=0.72, bottom=0.16, top=0.94)
+INK2, EDGE = '#333333', '#8C2D04'
+fig = plt.figure(figsize=(W, 3.45))
+gs = GridSpec(3, 1, height_ratios=[1.0, 2.0, 2.3], hspace=0.75,
+              left=0.10, right=0.71, bottom=0.17, top=0.93)
 
 def channel_note(ax, adjacency, positional):
-    x0 = 1.03
-    ax.text(x0, 0.66, 'adjacency', fontsize=6.4, color='#333333', transform=ax.transAxes, va='center')
-    ax.text(x0 + 0.14, 0.66, adjacency, fontsize=6.4, transform=ax.transAxes, va='center',
-            color=PAL['vermillion'] if adjacency == 'open' else PAL['green'], weight='bold')
-    ax.text(x0, 0.42, 'position', fontsize=6.4, color='#333333', transform=ax.transAxes, va='center')
-    ax.text(x0 + 0.12, 0.42, positional, fontsize=6.4, transform=ax.transAxes, va='center',
-            color=PAL['vermillion'] if positional == 'open' else PAL['green'], weight='bold')
+    for y, name, state in ((0.64, 'adjacency', adjacency), (0.34, 'position', positional)):
+        ax.text(1.04, y, name, fontsize=6.4, color=INK2, transform=ax.transAxes, va='center')
+        mark = r'$\checkmark$' if state == 'closed' else r'$\times$'
+        ax.text(1.245, y, f'{mark} {state}', fontsize=6.4, transform=ax.transAxes, va='center',
+                color=INK2 if state == 'closed' else PAL['vermillion'])
 
-# (a) random split, frame-level detail over ten layers
+# (a) random split: five frames per layer, all sixty layers
 ax = fig.add_subplot(gs[0])
 rng = np.random.RandomState(7)
-per_layer, n_test = 10, 3
-for i in range(1, 11):
+per_layer = 5
+cells = {}
+for L in range(1, N + 1):
+    n_test = 1 if rng.rand() < 0.6 else 2
     idx = set(rng.choice(per_layer, n_test, replace=False))
+    cells[L] = idx
     for k in range(per_layer):
         test = k in idx
-        ax.add_patch(Rectangle((i - 1 + k / per_layer + 0.004, 0.05), 0.9 / per_layer, 0.80,
+        ax.add_patch(Rectangle((L - 0.42 + k * 0.84 / per_layer, 0.05), 0.84 / per_layer - 0.012, 0.80,
                                facecolor=PAL['vermillion'] if test else PAL['blue'],
-                               edgecolor='#8C2D04' if test else 'none', lw=0.35))
-ax.set_xlim(0.0, 10.0); ax.set_ylim(-0.05, 1.05)
-ax.set_yticks([]); ax.set_xticks([1, 5, 10]); ax.set_xticklabels(['1', '5', '10'], fontsize=6.4)
-ax.tick_params(axis='x', length=2, pad=1)
+                               edgecolor=EDGE if test else 'none', lw=0.3))
+ax.set_xlim(0.3, N + 0.7); ax.set_ylim(-0.60, 1.10)
+ax.set_yticks([]); ax.set_xticks([1, 10, 20, 30, 40, 50, 60])
+ax.tick_params(axis='x', length=2, pad=1, labelsize=6.6)
 for sp in ax.spines.values(): sp.set_visible(False)
-ax.text(0.0, 1.10, 'Random split: ten frames per layer (layers 1--10)', fontsize=7.0, weight='bold', va='bottom')
-panel_label(ax, '(a)', x=-0.09, y=1.02)
+ax.text(1, 1.02, 'Random split: five frames per layer, all 60 layers', fontsize=7.0,
+        weight='bold', va='bottom')
+# bracket over one train/test boundary inside a layer
+Lb, ks = 6, sorted(cells[6])
+for k in ks:
+    if k + 1 < per_layer and (k + 1) not in ks:
+        x0 = Lb - 0.42 + k * 0.84 / per_layer
+        x1 = x0 + 2 * 0.84 / per_layer - 0.012
+        ax.plot([x0, x0, x1, x1], [-0.02, -0.10, -0.10, -0.02], lw=0.6, color=INK2, clip_on=False)
+        ax.text((x0 + x1) / 2, -0.14, 'adjacent train/test frames', ha='center', va='top',
+                fontsize=5.8, color=INK2)
+        break
+panel_label(ax, '(a)', x=-0.10, y=1.02)
 channel_note(ax, 'open', 'open')
 
-# (b) grouped 5-fold, actual GroupKFold assignment
+# (b) grouped 5-fold, actual assignment
 ax = fig.add_subplot(gs[1])
 for f in range(5):
     y0 = 4 - f
@@ -85,13 +98,13 @@ for f in range(5):
         test = fold_of[L] == f
         ax.add_patch(Rectangle((L - 0.42, y0), 0.84, 0.72,
                                facecolor=PAL['vermillion'] if test else PAL['blue'],
-                               edgecolor='#8C2D04' if test else 'none', lw=0.35))
-    ax.text(0.2, y0 + 0.36, f'fold {f+1}', fontsize=5.8, ha='right', va='center', color='#333333')
-ax.set_xlim(0.3, N + 0.7); ax.set_ylim(-0.1, 5.35)
+                               edgecolor=EDGE if test else 'none', lw=0.3))
+    ax.text(0.2, y0 + 0.36, f'fold {f+1}', fontsize=5.8, ha='right', va='center', color=INK2)
+ax.set_xlim(0.3, N + 0.7); ax.set_ylim(-0.1, 5.75)
 ax.set_yticks([]); ax.set_xticks([])
 for sp in ax.spines.values(): sp.set_visible(False)
-ax.text(1, 5.18, 'Layer-grouped 5-fold (actual assignment)', fontsize=7.0, weight='bold', va='bottom')
-panel_label(ax, '(b)', x=-0.09, y=1.02)
+ax.text(1, 5.68, 'Layer-grouped 5-fold (actual assignment)', fontsize=7.0, weight='bold', va='top')
+panel_label(ax, '(b)', x=-0.10, y=1.06)
 channel_note(ax, 'closed', 'open')
 
 # (c) forward chaining
@@ -102,25 +115,24 @@ for r, k in enumerate((20, 30, 40, 50)):
         if L <= k:
             fc, ec = PAL['blue'], 'none'
         elif L <= k + 10:
-            fc, ec = PAL['vermillion'], '#8C2D04'
+            fc, ec = PAL['vermillion'], EDGE
         else:
             fc, ec = '#EDEDED', 'none'
-        ax.add_patch(Rectangle((L - 0.42, y0), 0.84, 0.72, facecolor=fc, edgecolor=ec, lw=0.35))
-    ax.text(0.2, y0 + 0.36, f'k = {k}', fontsize=5.8, ha='right', va='center', color='#333333')
-    ax.text(k + 5, y0 + 0.36, 'test', fontsize=5.4, ha='center', va='center', color='white')
-ax.set_xlim(0.3, N + 0.7); ax.set_ylim(-0.1, 4.35)
+        ax.add_patch(Rectangle((L - 0.42, y0), 0.84, 0.72, facecolor=fc, edgecolor=ec, lw=0.3))
+    ax.text(0.2, y0 + 0.36, f'k = {k}', fontsize=5.8, ha='right', va='center', color=INK2)
+ax.set_xlim(0.3, N + 0.7); ax.set_ylim(-0.1, 4.72)
 ax.set_yticks([]); ax.set_xticks([1, 10, 20, 30, 40, 50, 60])
-ax.set_xlabel('Layer index', fontsize=7.0)
-ax.tick_params(axis='x', length=2)
+ax.set_xlabel('Layer index', fontsize=7.0, labelpad=2)
+ax.tick_params(axis='x', length=2, labelsize=6.6)
 for sp in ax.spines.values(): sp.set_visible(False)
-ax.text(1, 4.18, 'Forward chaining', fontsize=7.0, weight='bold', va='bottom')
-panel_label(ax, '(c)', x=-0.09, y=1.02)
+ax.text(1, 4.66, 'Forward chaining', fontsize=7.0, weight='bold', va='top')
+panel_label(ax, '(c)', x=-0.10, y=1.06)
 channel_note(ax, 'closed', 'closed')
 
 fig.legend(handles=[Patch(color=PAL['blue'], label='Training'),
-                    Patch(facecolor=PAL['vermillion'], edgecolor='#8C2D04', label='Test'),
+                    Patch(facecolor=PAL['vermillion'], edgecolor=EDGE, label='Test'),
                     Patch(color='#EDEDED', label='Not used')],
-           loc='lower center', ncol=3, fontsize=6.4, bbox_to_anchor=(0.40, -0.005),
+           loc='lower center', ncol=3, fontsize=6.4, bbox_to_anchor=(0.40, 0.005),
            handlelength=1.1, columnspacing=1.6)
 save(fig, 'fig_protocol_schematic'); plt.close(fig)
 
