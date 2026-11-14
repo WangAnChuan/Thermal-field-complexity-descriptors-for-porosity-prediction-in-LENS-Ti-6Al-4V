@@ -37,64 +37,90 @@ def panel_label(ax, text, x=-0.10, y=1.10):
 
 # ---------------------------------------------------------------- protocol schematic
 N = 60
+from sklearn.model_selection import GroupKFold
+lbl = pd.read_parquet('data/cache/labels.parquet')
+g_layers = lbl['Layer'].values
+fold_of = {}
+for f, (_, te) in enumerate(GroupKFold(n_splits=5).split(np.zeros((len(g_layers), 1)), groups=g_layers)):
+    for L in np.unique(g_layers[te]):
+        fold_of[int(L)] = f
+
 fig = plt.figure(figsize=(W, 3.55))
 gs = GridSpec(3, 1, height_ratios=[1.0, 2.0, 2.3], hspace=0.62,
-              left=0.10, right=0.78, bottom=0.16, top=0.94)
+              left=0.10, right=0.72, bottom=0.16, top=0.94)
 
-# (a) random split: every layer on both sides
+def channel_note(ax, adjacency, positional):
+    x0 = 1.03
+    ax.text(x0, 0.66, 'adjacency', fontsize=6.4, color='#333333', transform=ax.transAxes, va='center')
+    ax.text(x0 + 0.14, 0.66, adjacency, fontsize=6.4, transform=ax.transAxes, va='center',
+            color=PAL['vermillion'] if adjacency == 'open' else PAL['green'], weight='bold')
+    ax.text(x0, 0.42, 'position', fontsize=6.4, color='#333333', transform=ax.transAxes, va='center')
+    ax.text(x0 + 0.12, 0.42, positional, fontsize=6.4, transform=ax.transAxes, va='center',
+            color=PAL['vermillion'] if positional == 'open' else PAL['green'], weight='bold')
+
+# (a) random split, frame-level detail over ten layers
 ax = fig.add_subplot(gs[0])
-for i in range(1, N + 1):
-    ax.add_patch(Rectangle((i - 0.42, 0.0), 0.84, 0.70, facecolor=PAL['blue'], lw=0))
-    ax.add_patch(Rectangle((i - 0.42, 0.70), 0.84, 0.30, facecolor=PAL['vermillion'], lw=0))
-ax.set_xlim(0.3, N + 0.7); ax.set_ylim(0, 1.25)
-ax.set_yticks([]); ax.set_xticks([])
-for s in ax.spines.values(): s.set_visible(False)
-ax.text(1, 1.12, 'Random split', fontsize=7.0, weight='bold', va='bottom')
-ax.text(N + 1.0, 0.5, 'every layer\ncontributes\nto both sets', fontsize=6.0,
-        va='center', ha='left', color=PAL['neutral'])
+rng = np.random.RandomState(7)
+per_layer, n_test = 10, 3
+for i in range(1, 11):
+    idx = set(rng.choice(per_layer, n_test, replace=False))
+    for k in range(per_layer):
+        test = k in idx
+        ax.add_patch(Rectangle((i - 1 + k / per_layer + 0.004, 0.05), 0.9 / per_layer, 0.80,
+                               facecolor=PAL['vermillion'] if test else PAL['blue'],
+                               edgecolor='#8C2D04' if test else 'none', lw=0.35))
+ax.set_xlim(0.0, 10.0); ax.set_ylim(-0.05, 1.05)
+ax.set_yticks([]); ax.set_xticks([1, 5, 10]); ax.set_xticklabels(['1', '5', '10'], fontsize=6.4)
+ax.tick_params(axis='x', length=2, pad=1)
+for sp in ax.spines.values(): sp.set_visible(False)
+ax.text(0.0, 1.10, 'Random split: ten frames per layer (layers 1--10)', fontsize=7.0, weight='bold', va='bottom')
 panel_label(ax, '(a)', x=-0.09, y=1.02)
+channel_note(ax, 'open', 'open')
 
-# (b) grouped 5-fold
+# (b) grouped 5-fold, actual GroupKFold assignment
 ax = fig.add_subplot(gs[1])
 for f in range(5):
     y0 = 4 - f
-    for i in range(1, N + 1):
-        test = (i - 1) % 5 == f
-        ax.add_patch(Rectangle((i - 0.42, y0), 0.84, 0.72,
-                               facecolor=PAL['vermillion'] if test else PAL['blue'], lw=0))
-    ax.text(0.2, y0 + 0.36, f'fold {f+1}', fontsize=5.8, ha='right', va='center', color=PAL['neutral'])
+    for L in range(1, N + 1):
+        test = fold_of[L] == f
+        ax.add_patch(Rectangle((L - 0.42, y0), 0.84, 0.72,
+                               facecolor=PAL['vermillion'] if test else PAL['blue'],
+                               edgecolor='#8C2D04' if test else 'none', lw=0.35))
+    ax.text(0.2, y0 + 0.36, f'fold {f+1}', fontsize=5.8, ha='right', va='center', color='#333333')
 ax.set_xlim(0.3, N + 0.7); ax.set_ylim(-0.1, 5.35)
 ax.set_yticks([]); ax.set_xticks([])
-for s in ax.spines.values(): s.set_visible(False)
-ax.text(1, 5.18, 'Layer-grouped 5-fold', fontsize=7.0, weight='bold', va='bottom')
-ax.text(N + 1.0, 2.5, 'whole layers\nheld out, but\ntraining layers\nbracket the test', fontsize=6.0,
-        va='center', ha='left', color=PAL['neutral'])
+for sp in ax.spines.values(): sp.set_visible(False)
+ax.text(1, 5.18, 'Layer-grouped 5-fold (actual assignment)', fontsize=7.0, weight='bold', va='bottom')
 panel_label(ax, '(b)', x=-0.09, y=1.02)
+channel_note(ax, 'closed', 'open')
 
 # (c) forward chaining
 ax = fig.add_subplot(gs[2])
 for r, k in enumerate((20, 30, 40, 50)):
     y0 = 3 - r
-    for i in range(1, N + 1):
-        if i <= k: c = PAL['blue']
-        elif i <= k + 10: c = PAL['vermillion']
-        else: c = '#E8E8E8'
-        ax.add_patch(Rectangle((i - 0.42, y0), 0.84, 0.72, facecolor=c, lw=0))
-    ax.text(0.2, y0 + 0.36, f'k = {k}', fontsize=5.8, ha='right', va='center', color=PAL['neutral'])
+    for L in range(1, N + 1):
+        if L <= k:
+            fc, ec = PAL['blue'], 'none'
+        elif L <= k + 10:
+            fc, ec = PAL['vermillion'], '#8C2D04'
+        else:
+            fc, ec = '#EDEDED', 'none'
+        ax.add_patch(Rectangle((L - 0.42, y0), 0.84, 0.72, facecolor=fc, edgecolor=ec, lw=0.35))
+    ax.text(0.2, y0 + 0.36, f'k = {k}', fontsize=5.8, ha='right', va='center', color='#333333')
+    ax.text(k + 5, y0 + 0.36, 'test', fontsize=5.4, ha='center', va='center', color='white')
 ax.set_xlim(0.3, N + 0.7); ax.set_ylim(-0.1, 4.35)
 ax.set_yticks([]); ax.set_xticks([1, 10, 20, 30, 40, 50, 60])
 ax.set_xlabel('Layer index', fontsize=7.0)
 ax.tick_params(axis='x', length=2)
-for s in ax.spines.values(): s.set_visible(False)
+for sp in ax.spines.values(): sp.set_visible(False)
 ax.text(1, 4.18, 'Forward chaining', fontsize=7.0, weight='bold', va='bottom')
-ax.text(N + 1.0, 1.5, 'test lies beyond\nevery training\nlayer: both\nchannels closed', fontsize=6.0,
-        va='center', ha='left', color=PAL['neutral'])
 panel_label(ax, '(c)', x=-0.09, y=1.02)
+channel_note(ax, 'closed', 'closed')
 
 fig.legend(handles=[Patch(color=PAL['blue'], label='Training'),
-                    Patch(color=PAL['vermillion'], label='Test'),
-                    Patch(color='#E8E8E8', label='Not used')],
-           loc='lower center', ncol=3, fontsize=6.4, bbox_to_anchor=(0.38, -0.005),
+                    Patch(facecolor=PAL['vermillion'], edgecolor='#8C2D04', label='Test'),
+                    Patch(color='#EDEDED', label='Not used')],
+           loc='lower center', ncol=3, fontsize=6.4, bbox_to_anchor=(0.40, -0.005),
            handlelength=1.1, columnspacing=1.6)
 save(fig, 'fig_protocol_schematic'); plt.close(fig)
 
