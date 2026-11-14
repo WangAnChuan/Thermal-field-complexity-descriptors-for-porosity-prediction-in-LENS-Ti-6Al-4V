@@ -12,20 +12,12 @@ import matplotlib.pyplot as plt
 from matplotlib.gridspec import GridSpec
 from matplotlib.patches import Patch, Rectangle
 import matplotlib as mpl
+from figstyle import apply, panel as panel_head
 from pathlib import Path
 
 PAL = {'neutral': '#6E6E6E', 'neutral_light': '#B8B8B8', 'blue': '#0072B2',
        'vermillion': '#D55E00', 'green': '#009E73', 'ink': '#222222', 'grey': '#8C8C8C'}
-mpl.rcParams.update({
-    'font.family': 'serif', 'font.serif': ['Times New Roman', 'Liberation Serif', 'Nimbus Roman', 'DejaVu Serif'],
-    'mathtext.fontset': 'stix',
-    'pdf.fonttype': 42, 'font.size': 7.5, 'axes.titlesize': 7.5, 'axes.labelsize': 7.5,
-    'xtick.labelsize': 7, 'ytick.labelsize': 7, 'legend.fontsize': 6.8,
-    'axes.spines.right': False, 'axes.spines.top': False, 'axes.linewidth': 0.7,
-    'xtick.major.width': 0.7, 'ytick.major.width': 0.7,
-    'xtick.major.size': 2.5, 'ytick.major.size': 2.5,
-    'legend.frameon': False, 'figure.dpi': 300, 'savefig.dpi': 600, 'axes.axisbelow': True,
-})
+apply()
 OUT = Path('figures'); OUT.mkdir(exist_ok=True)
 W = 5.42
 
@@ -72,15 +64,15 @@ ax.set_xticks([0.5, 1, 2, 5, 10, 20]); ax.set_xticklabels(['0.5', '1', '2', '5',
 ax.minorticks_off()
 ax.set_yticks(y); ax.set_yticklabels(d.label, fontsize=6.2)
 ax.set_xlabel('Protocol transfer ratio (log scale)', fontsize=7.0)
+panel_head(ax, None, 'Protocol transfer ratio', x=-0.42, y=1.02)
 ax.text(1.06, -0.55, 'no transfer', fontsize=5.8, color=PAL['neutral'], va='center')
 ax.set_ylim(-0.9, len(d) - 0.4)
-panel_label(ax, '', x=0, y=0)
 save(fig, 'fig_ptr_forest'); plt.close(fig)
 
 # ---------------------------------------------------------------- calibration
 cal = pd.read_csv('results/results_ptr_calibration.csv')
 g = cal.groupby('omega').ptr.agg(['mean', 'std', 'count']).reset_index()
-fig, ax = plt.subplots(figsize=(W * 0.62, 1.95))
+fig, ax = plt.subplots(figsize=(W * 0.72, 2.05))
 ax.errorbar(g.omega, g['mean'], yerr=g['std'], fmt='o-', ms=3.6, lw=0.9,
             color=PAL['green'], ecolor=PAL['green'], elinewidth=0.7, capsize=2, capthick=0.6)
 ax.plot([0.8, 5.2], [0.8, 5.2], ls=':', lw=0.7, color=PAL['grey'])
@@ -91,7 +83,8 @@ ax.set_yticks([1, 2, 3, 5]); ax.set_yticklabels(['1', '2', '3', '5'])
 ax.minorticks_off()
 ax.set_xlim(0.85, 5.5); ax.set_ylim(0.85, 5.5)
 ax.set(xlabel='True effect growth factor', ylabel='Estimated PTR')
-ax.text(5.3, 1.02, 'PTR rises only to 1.11\nfor a five-fold effect', fontsize=5.8, color=PAL['neutral'],
-        ha='right', va='top')
+panel_head(ax, None, 'Synthetic calibration', x=-0.28, y=1.03)
+ax.text(5.4, 1.95, 'PTR rises only to 1.11\nfor a five-fold effect', fontsize=6.0, color=PAL['neutral'],
+        ha='right', va='center')
 save(fig, 'fig_calibration'); plt.close(fig)
 print('additions done')

@@ -15,34 +15,10 @@ import matplotlib.pyplot as plt
 from matplotlib.gridspec import GridSpec
 from matplotlib.patches import FancyBboxPatch, FancyArrowPatch, Rectangle
 import matplotlib as mpl
+from figstyle import apply, panel as panel_head
 from pathlib import Path
 
-mpl.rcParams.update({
-    'font.family': 'serif',
-    'font.serif': ['Times New Roman', 'Liberation Serif', 'Nimbus Roman', 'DejaVu Serif'],
-    'mathtext.fontset': 'stix',
-    'svg.fonttype': 'none',
-    'pdf.fonttype': 42,
-    'ps.fonttype': 42,
-    'font.size': 7.5,
-    'axes.titlesize': 7.5,
-    'axes.labelsize': 7.5,
-    'xtick.labelsize': 7,
-    'ytick.labelsize': 7,
-    'legend.fontsize': 6.8,
-    'axes.spines.right': False,
-    'axes.spines.top': False,
-    'axes.linewidth': 0.7,
-    'xtick.major.width': 0.7,
-    'ytick.major.width': 0.7,
-    'xtick.major.size': 2.5,
-    'ytick.major.size': 2.5,
-    'legend.frameon': False,
-    'legend.handletextpad': 0.5,
-    'figure.dpi': 300,
-    'savefig.dpi': 600,
-    'axes.axisbelow': True,
-})
+apply()
 
 PAL = {'neutral': '#6E6E6E', 'neutral_light': '#B8B8B8', 'blue': '#0072B2',
        'vermillion': '#D55E00', 'green': '#009E73', 'ink': '#222222', 'grey': '#8C8C8C'}
@@ -59,9 +35,7 @@ def panel_label(ax, text, x=-0.16, y=1.10):
             va='bottom', ha='left', color=PAL['ink'])
 
 def grid(ax, axis='y'):
-    # No gridlines: ticks and direct labels carry the values, and removing the
-    # rules keeps every annotation and legend clear of crossing strokes.
-    ax.grid(False)
+    ax.grid(axis=axis, color='#EEEEEE', linewidth=0.6)
     ax.set_axisbelow(True)
 
 def alignment_gate(fig, stem):
@@ -213,7 +187,7 @@ ax.annotate('CatBoost falls', xy=(4, 0.86), xytext=(2.2, 0.955), fontsize=6.2, c
             arrowprops=dict(arrowstyle='-', lw=0.5, color=PAL['neutral']))
 ax.annotate('TabPFN rises', xy=(5, 0.90), xytext=(3.6, 0.785), fontsize=6.2, color=PAL['neutral'],
             arrowprops=dict(arrowstyle='-', lw=0.5, color=PAL['neutral']))
-panel_label(ax, '(a)', x=-0.14)
+panel_head(ax, 'a', 'PR-AUC by model', x=-0.14)
 
 # (b) three protocols, one model: accuracy stays flat, PR-AUC moves
 ax = axs[1]
@@ -231,7 +205,7 @@ ax.set(ylabel='Metric value', ylim=(0.80, 1.01), xlim=(-0.45, 2.45))
 ax.set_yticks([0.80, 0.85, 0.90, 0.95, 1.00])
 ax.legend(loc='lower left', fontsize=6.2, ncol=1)
 grid(ax)
-panel_label(ax, '(b)', x=-0.34)
+panel_head(ax, 'b', 'Metric change', x=-0.34)
 save(fig, 'fig3_protocol'); plt.close(fig)
 
 # ---------------------------------------------------------------- Fig 4 ablation
@@ -250,7 +224,7 @@ ax.set(ylabel='PR-AUC', ylim=(0.70, 1.03))
 ax.set_xlim(-0.9, 5.9)
 ax.legend(loc='lower right', fontsize=6.0, handletextpad=0.3, ncol=1)
 grid(ax)
-panel_label(ax, '(a)', x=-0.15)
+panel_head(ax, 'a', 'PR-AUC by feature set', x=-0.15)
 
 ax = axs[1]
 names = ['Entropy', 'Gradient', 'Topology', 'Moran', 'Area']
@@ -262,9 +236,9 @@ ax.set_xticks(xx); ax.set_xticklabels(names, rotation=50, ha='right', fontsize=5
 ax.tick_params(axis='x', pad=2)
 ax.set(ylabel='Gain over own baseline', ylim=(-0.07, 0.10))
 ax.set_yticks([-0.06, -0.03, 0, 0.03, 0.06, 0.09])
-ax.legend(loc='lower left', fontsize=5.6, handletextpad=0.3)
+ax.legend(loc='upper right', fontsize=5.6, handletextpad=0.3)
 grid(ax)
-panel_label(ax, '(b)', x=-0.30)
+panel_head(ax, 'b', 'Gain over baseline', x=-0.3)
 save(fig, 'fig4_ablation'); plt.close(fig)
 
 # ---------------------------------------------------------------- Fig 5 robustness
@@ -287,7 +261,7 @@ ax.set_xticks(x); ax.set_xticklabels(mm, fontsize=6.8)
 ax.set(ylabel='PR-AUC', ylim=(0.60, 1.04), xlim=(-0.5, 2.5))
 ax.set_yticks([0.6, 0.7, 0.8, 0.9, 1.0])
 ax.legend(loc='lower left', fontsize=5.8, handletextpad=0.3); grid(ax)
-panel_label(ax, '(a)', x=-0.30)
+panel_head(ax, 'a', 'Ten-seed forward PR-AUC', x=-0.3)
 
 ax = fig.add_subplot(gs[1]); s2 = ex[ex.protocol == 'forward']
 b1 = [s2[(s2.model == m) & (s2.feat == 'base')]['pr'].iloc[0] for m in mm]
@@ -300,7 +274,7 @@ ax.set_xticks(x); ax.set_xticklabels(mm, fontsize=6.8)
 ax.set(ylabel='PR-AUC', ylim=(0.60, 1.04), xlim=(-0.5, 2.5))
 ax.set_yticks([0.6, 0.7, 0.8, 0.9, 1.0])
 ax.legend(loc='lower left', fontsize=5.8, handletextpad=0.3); grid(ax)
-panel_label(ax, '(b)', x=-0.30)
+panel_head(ax, 'b', 'Without layers 1–2', x=-0.3)
 
 ax = fig.add_subplot(gs[2]); q = ll[ll['agg'] == 'max']
 keys = list(dict.fromkeys(zip(q.model, q.feat)))
@@ -316,7 +290,7 @@ ax.tick_params(axis='x', pad=2)
 ax.set(ylabel='Layer-level PR-AUC', ylim=(0.90, 1.015))
 ax.set_yticks([0.90, 0.92, 0.94, 0.96, 0.98, 1.00])
 ax.legend(loc='lower right', fontsize=5.6, handletextpad=0.3); grid(ax)
-panel_label(ax, '(c)', x=-0.30)
+panel_head(ax, 'c', 'Layer-level PR-AUC', x=-0.3)
 save(fig, 'fig5_robustness'); plt.close(fig)
 
 # ---------------------------------------------------------------- Fig 6 decision
@@ -335,7 +309,7 @@ ax.legend(loc='lower left', fontsize=6.2); grid(ax)
 ax.annotate('20:1', xy=(20, 0.95), xytext=(9, 1.0), fontsize=6.0, color=PAL['neutral'],
             arrowprops=dict(arrowstyle='-', lw=0.5, color=PAL['neutral']))
 ax.text(14, 0.53, 'plausible range', fontsize=5.6, ha='center', color=PAL['neutral'])
-panel_label(ax, '(a)', x=-0.22)
+panel_head(ax, 'a', 'Cost-sensitive operating points', x=-0.22)
 
 ax = axs[1]
 for f, c, lbl in (('base', PAL['neutral_light'], 'Baseline'), ('entropy+gradient', GREEN, '+ descriptors')):
@@ -343,10 +317,10 @@ for f, c, lbl in (('base', PAL['neutral_light'], 'Baseline'), ('entropy+gradient
     ax.plot(d.coverage, d.miss_rate, 'o-', ms=3, lw=1.0, color=c, label=lbl)
 ax.axvline(0.9, ls=':', lw=0.7, color=GREY)
 ax.set(xlabel='Automatic coverage', ylabel='Miss rate', ylim=(-0.015, 0.30))
-ax.text(0.98, 0.965, 'n = 20 pore frames', transform=ax.transAxes, fontsize=5.8,
+ax.text(0.86, 0.955, 'n = 20 pore frames', transform=ax.transAxes, fontsize=5.8,
         ha='right', va='top', color=PAL['neutral'])
 ax.legend(loc='upper left', fontsize=6.0); grid(ax)
-panel_label(ax, '(b)', x=-0.28)
+panel_head(ax, 'b', 'Abstention', x=-0.28)
 save(fig, 'fig6_decision'); plt.close(fig)
 
 # ---------------------------------------------------------------- Fig 7 SHAP
@@ -372,7 +346,7 @@ from matplotlib.patches import Patch
 ax.legend(handles=[Patch(color=GREEN, label='This work'), Patch(color=PAL['neutral_light'], label='Baseline')],
           loc='lower right', fontsize=5.6, handlelength=1.0)
 ax.grid(False); ax.set_axisbelow(True)
-panel_label(ax, '(a)', x=-0.50)
+panel_head(ax, 'a', 'Global importance', x=-0.5)
 
 ax = axs[1]
 for f, c, lbl, off in (('hist_entropy', GREEN, 'Entropy', -0.08),
@@ -385,7 +359,7 @@ ax.set(xlabel='Feature quintile', ylabel='Pore rate (%)', ylim=(-1, 27))
 ax.text(0.03, 0.95, 'Q1 holds 68 of 71\npore frames', transform=ax.transAxes, fontsize=5.6,
         va='top', color=PAL['neutral'])
 ax.legend(loc='upper right', fontsize=6.0, ncol=1); grid(ax)
-panel_label(ax, '(b)', x=-0.26)
+panel_head(ax, 'b', 'Pore rate by quintile', x=-0.26)
 save(fig, 'fig7_shap'); plt.close(fig)
 
 print('all figures regenerated')

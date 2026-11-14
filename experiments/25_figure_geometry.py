@@ -8,22 +8,14 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import matplotlib as mpl
+from figstyle import apply, panel as panel_head
 from matplotlib.gridspec import GridSpec
 from skimage.measure import regionprops, label as sk_label
 from src.features import build
 
 PAL = {'neutral': '#6E6E6E', 'neutral_light': '#B8B8B8', 'blue': '#0072B2',
        'vermillion': '#D55E00', 'green': '#009E73', 'ink': '#222222', 'grey': '#8C8C8C'}
-mpl.rcParams.update({
-    'font.family': 'serif', 'font.serif': ['Times New Roman', 'Liberation Serif', 'Nimbus Roman', 'DejaVu Serif'],
-    'mathtext.fontset': 'stix',
-    'pdf.fonttype': 42, 'font.size': 7.5, 'axes.titlesize': 7.5, 'axes.labelsize': 7.5,
-    'xtick.labelsize': 7, 'ytick.labelsize': 7, 'legend.fontsize': 6.8,
-    'axes.spines.right': False, 'axes.spines.top': False, 'axes.linewidth': 0.7,
-    'xtick.major.width': 0.7, 'ytick.major.width': 0.7,
-    'xtick.major.size': 2.5, 'ytick.major.size': 2.5,
-    'legend.frameon': False, 'figure.dpi': 300, 'savefig.dpi': 600, 'axes.axisbelow': True,
-})
+apply()
 
 def panel_label(ax, text, x=-0.16, y=1.10):
     ax.text(x, y, text, transform=ax.transAxes, fontsize=8, weight='bold',
@@ -58,8 +50,8 @@ for col, (k, ttl) in enumerate(((ip, 'pore frame'), (inn, 'no-pore frame'))):
     ax.set_xticks([]); ax.set_yticks([])
     for s in ax.spines.values():
         s.set_visible(False)
-fig.text(0.005, 0.90, '(a)', fontsize=8, weight='bold')
-fig.text(0.035, 0.90, 'liquidus 1660 °C  ·  solidus 1600 °C', fontsize=6.4, color=PAL['neutral'])
+fig.text(0.005, 0.955, '(a)  Frames and isotherms', fontsize=8, weight='bold')
+fig.text(0.005, 0.895, 'liquidus 1660 °C  ·  solidus 1600 °C', fontsize=6.0, color=PAL['neutral'])
 p1, p2 = axes_a[0].get_position(), axes_a[1].get_position()
 cax = fig.add_axes([p1.x0 + 0.02, p1.y0 - 0.135, (p2.x1 - p1.x0) * 0.72, 0.018])
 cb = fig.colorbar(im, cax=cax, orientation='horizontal')
@@ -103,7 +95,7 @@ ax.set_xlabel('single-feature discriminability  |AUC − 0.5|', fontsize=6.8)
 ax.set_xlim(0, 0.5)
 ax.spines['left'].set_visible(False)
 ax.tick_params(axis='y', length=0)
-panel_label(ax, '(b)', x=-0.60, y=1.02)
+panel_head(ax, 'b', 'Discriminability', x=-0.62, y=1.06)
 
 # ---------------- (c) forward-chaining PR-AUC ----------------
 ax = fig.add_subplot(gs[3])
@@ -123,7 +115,7 @@ ax.axhline(base_v, color=PAL['grey'], lw=0.7, ls=(0, (1, 2)), zorder=1)
 ax.text(3.45, base_v - 0.006, 'baseline', fontsize=5.4, color=PAL['neutral'], ha='right', va='top')
 ax.legend(loc='upper left', ncol=2, fontsize=5.8, handletextpad=0.25, columnspacing=0.6,
           bbox_to_anchor=(0.0, 1.02))
-panel_label(ax, '(c)', x=-0.24, y=1.02)
+panel_head(ax, 'c', 'Forward PR-AUC', x=-0.30, y=1.06)
 
 save(fig, 'fig_geometry')
 print('saved fig_geometry')
