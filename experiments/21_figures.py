@@ -46,6 +46,11 @@ mpl.rcParams.update({
 PAL = {'neutral': '#6E6E6E', 'neutral_light': '#B8B8B8', 'blue': '#0072B2',
        'vermillion': '#D55E00', 'green': '#009E73', 'ink': '#222222', 'grey': '#8C8C8C'}
 OUT = Path('figures')
+RES = Path('results')
+def R(name):
+    """Result tables live in results/ in the released repository."""
+    p = RES / name
+    return p if p.exists() else Path(name)
 FINAL_WIDTH_IN = 5.42
 
 def panel_label(ax, text, x=-0.16, y=1.10):
@@ -182,131 +187,142 @@ arr((96.0, 40), (96.0, 32), INK); arr((96.0, 32), (42.6, 32), INK)
 save(fig, 'fig2_overview'); plt.close(fig)
 
 # ---------------------------------------------------------------- Fig 3 protocol
-bench = pd.read_csv('results_bench_suite.csv'); b = bench[bench.feat == 'basic15']
+bench = pd.read_csv(R('results_bench_suite.csv')); b = bench[bench.feat == 'base']
 models = ['LogReg', 'RF', 'XGB', 'LGBM', 'CatBoost', 'TabPFN']
-g5 = [b[(b.model == m) & (b.protocol == 'group5')].pr.values[0] for m in models]
-fw = [b[(b.model == m) & (b.protocol == 'forward')].pr.values[0] for m in models]
-leak = pd.read_csv('results_leakage.csv'); leak = leak[leak.model == 'XGB'].reset_index(drop=True)
+g5 = np.array([b[(b.model == m) & (b.protocol == 'group5')].pr.values[0] for m in models])
+fw = np.array([b[(b.model == m) & (b.protocol == 'forward')].pr.values[0] for m in models])
+g5s = np.array([b[(b.model == m) & (b.protocol == 'group5')].pr_std.values[0] for m in models])
+fws = np.array([b[(b.model == m) & (b.protocol == 'forward')].pr_std.values[0] for m in models])
+leak = pd.read_csv(R('results_leakage.csv'))
 
-fig, axs = plt.subplots(1, 2, figsize=(W, 2.15), gridspec_kw={'width_ratios': [1.55, 1], 'wspace': 0.45})
+fig, axs = plt.subplots(1, 2, figsize=(W, 2.25), gridspec_kw={'width_ratios': [1.55, 1], 'wspace': 0.48})
 ax = axs[0]; x = np.arange(len(models))
 for i in range(len(models)):
     ax.plot([i, i], [g5[i], fw[i]], color='#D0D0D0', lw=1.2, zorder=1)
-ax.scatter(x, g5, s=26, color=BLUE, zorder=3, label='Layer-grouped')
-ax.scatter(x, fw, s=26, color=VERM, zorder=3, label='Forward chaining')
+ax.errorbar(x, g5, yerr=g5s, fmt='o', ms=4, color=BLUE, ecolor=BLUE, elinewidth=0.6,
+            capsize=1.5, capthick=0.6, zorder=3, label='Layer-grouped')
+ax.errorbar(x, fw, yerr=fws, fmt='o', ms=4, color=VERM, ecolor=VERM, elinewidth=0.6,
+            capsize=1.5, capthick=0.6, zorder=3, label='Forward chaining')
 ax.set_xticks(x); ax.set_xticklabels(models, rotation=45, ha='right', fontsize=6.0)
 ax.tick_params(axis='x', pad=2)
-ax.set(ylabel='PR-AUC', ylim=(0.66, 0.97), xlim=(-0.7, 5.7))
+ax.set(ylabel='PR-AUC', ylim=(0.50, 0.99), xlim=(-0.7, 5.7))
 ax.legend(loc='lower right', ncol=1, handletextpad=0.2, fontsize=6.2)
 grid(ax)
-ax.annotate('ranking inverts', xy=(4, 0.86), xytext=(2.1, 0.955), fontsize=6.3, color=PAL['neutral'],
+ax.annotate('CatBoost falls', xy=(4, 0.86), xytext=(2.2, 0.955), fontsize=6.2, color=PAL['neutral'],
+            arrowprops=dict(arrowstyle='-', lw=0.5, color=PAL['neutral']))
+ax.annotate('TabPFN rises', xy=(5, 0.90), xytext=(3.6, 0.785), fontsize=6.2, color=PAL['neutral'],
             arrowprops=dict(arrowstyle='-', lw=0.5, color=PAL['neutral']))
 panel_label(ax, '(a)', x=-0.14)
 
+# (b) three protocols, one model: accuracy stays flat, PR-AUC moves
 ax = axs[1]
-base_acc, base_pr = leak.acc.iloc[0], leak.pr.iloc[0]
-d_acc = [leak.acc.iloc[1] - base_acc, leak.acc.iloc[2] - base_acc]
-d_pr = [leak.pr.iloc[1] - base_pr, leak.pr.iloc[2] - base_pr]
-xs = np.arange(2); w = 0.34
-ax.bar(xs - w / 2, d_acc, w, color=PAL['neutral_light'], label='Accuracy', edgecolor='none')
-ax.bar(xs + w / 2, d_pr, w, color=GREEN, label='PR-AUC', edgecolor='none')
-ax.axhline(0, color=INK, lw=0.6)
-ax.set_xticks(xs); ax.set_xticklabels(['Grouped\nvs random', 'Forward\nvs random'])
-ax.set(ylabel='Change in metric', ylim=(-0.031, 0.031))
-ax.set_yticks([-0.03, -0.02, -0.01, 0, 0.01, 0.02, 0.03])
-ax.legend(loc='lower left', fontsize=6.4)
+prot = ['random_5fold', 'grouped_5fold', 'forward_chaining']
+lbl = ['Random', 'Grouped', 'Forward']
+pr = [leak[(leak.protocol == p) & (leak.model == 'Cat')].pr.values[0] for p in prot]
+ac = [leak[(leak.protocol == p) & (leak.model == 'Cat')].acc.values[0] for p in prot]
+xs = np.arange(3)
+ax.plot(xs, pr, 'o-', ms=4, lw=1.0, color=GREEN, label='PR-AUC')
+ax.plot(xs, ac, 's--', ms=3.6, lw=1.0, color=PAL['neutral'], label='Accuracy')
+ax.axhline(0.955, ls=':', lw=0.8, color=GREY)
+ax.text(-0.42, 0.950, 'trivial classifier', fontsize=5.8, color=PAL['neutral'], ha='left', va='top')
+ax.set_xticks(xs); ax.set_xticklabels(lbl)
+ax.set(ylabel='Metric value', ylim=(0.80, 1.01), xlim=(-0.45, 2.45))
+ax.set_yticks([0.80, 0.85, 0.90, 0.95, 1.00])
+ax.legend(loc='lower left', fontsize=6.2, ncol=1)
 grid(ax)
-panel_label(ax, '(b)', x=-0.32)
+panel_label(ax, '(b)', x=-0.34)
 save(fig, 'fig3_protocol'); plt.close(fig)
 
 # ---------------------------------------------------------------- Fig 4 ablation
-combo = pd.read_csv('results_combo.csv'); abl = pd.read_csv('results_ablation.csv')
-labels = ['base', '+E', '+G', '+E+G', '+EG+A', 'full']
-fig, axs = plt.subplots(1, 2, figsize=(W, 2.2), gridspec_kw={'width_ratios': [1.35, 1], 'wspace': 0.40})
-ax = axs[0]; x = np.arange(len(combo))
-ax.vlines(x, 0.70, combo.cat_forward, color='#D8D8D8', lw=1.1, zorder=1)
-ax.scatter(x, combo.cat_forward, s=24, color=VERM, zorder=3, label='Forward')
-ax.scatter(x, combo.cat_group5, s=22, color=BLUE, zorder=3, marker='s', label='Grouped')
-ax.errorbar(x, combo.cat_forward, yerr=combo.cat_forward_sd, fmt='none', ecolor=VERM,
-            elinewidth=0.6, capsize=1.5, capthick=0.6, zorder=2, alpha=0.75)
-ax.set_xticks(x); ax.set_xticklabels(labels, fontsize=6.6)
-ax.tick_params(axis='x', pad=8)
+combo = pd.read_csv(R('results_combo.csv')); abl = pd.read_csv(R('results_ablation.csv'))
+labels = ['base', '+E', '+G', '+E+G', '+E+G\n+A', 'full']
+fig, axs = plt.subplots(1, 2, figsize=(W, 2.35), gridspec_kw={'width_ratios': [1.35, 1], 'wspace': 0.40})
+ax = axs[0]; x = np.arange(len(combo)); d = 0.09
+ax.errorbar(x - d, combo.cat_forward, yerr=combo.cat_forward_sd, fmt='o', ms=4,
+            color=VERM, ecolor=VERM, elinewidth=0.6, capsize=1.5, capthick=0.6, zorder=3,
+            label='Forward chaining')
+ax.scatter(x + d, combo.cat_group5, s=20, color=BLUE, zorder=3, marker='s', label='Grouped CV')
+ax.set_xticks(x)
+ax.set_xticklabels(labels, fontsize=6.2)
+ax.tick_params(axis='x', pad=3, length=2)
 ax.set(ylabel='PR-AUC', ylim=(0.70, 1.03))
-ax.set_xlim(-1.0, 6.0)
-ax.set_title('Forward (red) vs grouped (blue)', fontsize=7.0)
+ax.set_xlim(-0.9, 5.9)
+ax.legend(loc='lower right', fontsize=6.0, handletextpad=0.3, ncol=1)
 grid(ax)
 panel_label(ax, '(a)', x=-0.15)
 
 ax = axs[1]
-names = ['Entropy', 'Gradient', 'Topology', 'Area', 'Moran']
+names = ['Entropy', 'Gradient', 'Topology', 'Moran', 'Area']
 xx = np.arange(5); w = 0.34
-ax.bar(xx - w / 2, abl.forward - 0.845, w, color=VERM, edgecolor='none', label='Forward')
-ax.bar(xx + w / 2, abl.group5 - 0.938, w, color=BLUE, edgecolor='none', label='Grouped')
+ax.bar(xx - w / 2, abl.forward - 0.845, w, color=VERM, edgecolor='none', label='Forward chaining')
+ax.bar(xx + w / 2, abl.group5 - 0.938, w, color=BLUE, edgecolor='none', label='Grouped CV')
 ax.axhline(0, color=INK, lw=0.6)
 ax.set_xticks(xx); ax.set_xticklabels(names, rotation=50, ha='right', fontsize=5.8)
 ax.tick_params(axis='x', pad=2)
-ax.set(ylabel='Gain over baseline', ylim=(-0.07, 0.10))
+ax.set(ylabel='Gain over own baseline', ylim=(-0.07, 0.10))
 ax.set_yticks([-0.06, -0.03, 0, 0.03, 0.06, 0.09])
-ax.set_title('Forward (orange) vs grouped (blue)', fontsize=7.0)
+ax.legend(loc='lower left', fontsize=5.6, handletextpad=0.3)
 grid(ax)
 panel_label(ax, '(b)', x=-0.30)
 save(fig, 'fig4_ablation'); plt.close(fig)
 
 # ---------------------------------------------------------------- Fig 5 robustness
-ms = pd.read_csv('results_multiseed.csv'); ex = pd.read_csv('results_exclude_firstlayers.csv')
-ll = pd.read_csv('results_layerlevel.csv')
+ms = pd.read_csv(R('results_multiseed.csv')); ex = pd.read_csv(R('results_exclude_firstlayers.csv'))
+ll = pd.read_csv(R('results_layerlevel.csv'))
 fig = plt.figure(figsize=(W, 3.10))
-gs = GridSpec(1, 3, width_ratios=[1, 1, 1], wspace=0.55, left=0.08, right=0.99, bottom=0.22, top=0.88)
+gs = GridSpec(1, 3, width_ratios=[1, 1, 1], wspace=0.58, left=0.08, right=0.99, bottom=0.24, top=0.88)
 
 ax = fig.add_subplot(gs[0]); mm = ['XGB', 'Cat', 'RF']; x = np.arange(3)
 a = ms[ms.protocol == 'forward']
-b1 = [a[(a.model == m) & (a.feat == '基础15')]['mean'].iloc[0] for m in mm]
-b2 = [a[(a.model == m) & (a.feat == '+熵+梯度')]['mean'].iloc[0] for m in mm]
-e1 = [a[(a.model == m) & (a.feat == '基础15')]['sd'].iloc[0] for m in mm]
-e2 = [a[(a.model == m) & (a.feat == '+熵+梯度')]['sd'].iloc[0] for m in mm]
+b1 = [a[(a.model == m) & (a.feat == 'base')]['mean'].iloc[0] for m in mm]
+b2 = [a[(a.model == m) & (a.feat == 'entropy+gradient')]['mean'].iloc[0] for m in mm]
+e1 = [a[(a.model == m) & (a.feat == 'base')]['sd'].iloc[0] for m in mm]
+e2 = [a[(a.model == m) & (a.feat == 'entropy+gradient')]['sd'].iloc[0] for m in mm]
 ax.errorbar(x - 0.10, b1, yerr=e1, fmt='o', ms=4, color=PAL['neutral_light'], ecolor=PAL['neutral_light'],
-            elinewidth=0.8, capsize=2, capthick=0.7, label='Base')
-ax.errorbar(x + 0.10, b2, yerr=e2, fmt='o', ms=4, color=BLUE, ecolor=BLUE,
-            elinewidth=0.8, capsize=2, capthick=0.7, label='+E+G')
+            elinewidth=0.8, capsize=2, capthick=0.7, label='Baseline')
+ax.errorbar(x + 0.10, b2, yerr=e2, fmt='o', ms=4, color=GREEN, ecolor=GREEN,
+            elinewidth=0.8, capsize=2, capthick=0.7, label='+ descriptors')
 ax.set_xticks(x); ax.set_xticklabels(mm, fontsize=6.8)
 ax.set(ylabel='PR-AUC', ylim=(0.60, 1.04), xlim=(-0.5, 2.5))
 ax.set_yticks([0.6, 0.7, 0.8, 0.9, 1.0])
-ax.legend(loc='lower left', fontsize=6.0, handletextpad=0.3); grid(ax)
+ax.legend(loc='lower left', fontsize=5.8, handletextpad=0.3); grid(ax)
 panel_label(ax, '(a)', x=-0.30)
 
 ax = fig.add_subplot(gs[1]); s2 = ex[ex.protocol == 'forward']
-b1 = [s2[(s2.model == m) & (s2.feat == '基础15')]['pr'].iloc[0] for m in mm]
-b2 = [s2[(s2.model == m) & (s2.feat == '基础+熵+梯度')]['pr'].iloc[0] for m in mm]
+b1 = [s2[(s2.model == m) & (s2.feat == 'base')]['pr'].iloc[0] for m in mm]
+b2 = [s2[(s2.model == m) & (s2.feat == 'base+entropy+gradient')]['pr'].iloc[0] for m in mm]
 for i, m in enumerate(mm):
     ax.plot([i, i], [b1[i], b2[i]], color='#D8D8D8', lw=1.0, zorder=1)
-ax.scatter(x, b1, s=26, color=PAL['neutral_light'], zorder=3)
-ax.scatter(x, b2, s=26, color=BLUE, zorder=3)
+ax.scatter(x, b1, s=26, color=PAL['neutral_light'], zorder=3, label='Baseline')
+ax.scatter(x, b2, s=26, color=GREEN, zorder=3, label='+ descriptors')
 ax.set_xticks(x); ax.set_xticklabels(mm, fontsize=6.8)
 ax.set(ylabel='PR-AUC', ylim=(0.60, 1.04), xlim=(-0.5, 2.5))
 ax.set_yticks([0.6, 0.7, 0.8, 0.9, 1.0])
-grid(ax)
+ax.legend(loc='lower left', fontsize=5.8, handletextpad=0.3); grid(ax)
 panel_label(ax, '(b)', x=-0.30)
 
 ax = fig.add_subplot(gs[2]); q = ll[ll['agg'] == 'max']
 keys = list(dict.fromkeys(zip(q.model, q.feat)))
-labs = [f'{m}\n{"base" if f == "基础15" else "+E+G"}' for m, f in keys]
+labs = [f'{m} {"base" if f == "base" else "+E+G"}' for m, f in keys]
 gv = [q[(q.model == m) & (q.feat == f) & (q.protocol == 'group5')]['pr'].iloc[0] for m, f in keys]
 fv = [q[(q.model == m) & (q.feat == f) & (q.protocol == 'forward')]['pr'].iloc[0] for m, f in keys]
 xx = np.arange(len(keys))
 ax.vlines(xx, gv, fv, color='#D8D8D8', lw=1.0, zorder=1)
-ax.scatter(xx, gv, s=26, color=BLUE, zorder=3, label='Grouped')
+ax.scatter(xx, gv, s=26, color=BLUE, zorder=3, label='Grouped CV')
 ax.scatter(xx, fv, s=26, color=VERM, zorder=3, label='Forward')
-ax.set_xticks(xx); ax.set_xticklabels(labs, fontsize=5.8)
-ax.set(ylabel='Layer-level PR-AUC', ylim=(0.90, 1.012))
+ax.set_xticks(xx); ax.set_xticklabels(labs, fontsize=5.4, rotation=25, ha='right')
+ax.tick_params(axis='x', pad=2)
+ax.set(ylabel='Layer-level PR-AUC', ylim=(0.90, 1.015))
 ax.set_yticks([0.90, 0.92, 0.94, 0.96, 0.98, 1.00])
-ax.legend(loc='lower right', fontsize=5.8, handletextpad=0.3); grid(ax)
+ax.legend(loc='lower right', fontsize=5.6, handletextpad=0.3); grid(ax)
 panel_label(ax, '(c)', x=-0.30)
 save(fig, 'fig5_robustness'); plt.close(fig)
 
 # ---------------------------------------------------------------- Fig 6 decision
-cost = pd.read_csv('results_cost.csv'); sel = pd.read_csv('results_selective.csv')
-fig, axs = plt.subplots(1, 2, figsize=(W, 2.05), gridspec_kw={'wspace': 0.42})
+cost = pd.read_csv(R('results_cost.csv')); sel = pd.read_csv(R('results_selective.csv'))
+fig, axs = plt.subplots(1, 2, figsize=(W, 2.15), gridspec_kw={'wspace': 0.44})
 ax = axs[0]
+ax.axvspan(10, 20, color='#000000', alpha=0.045, lw=0, zorder=0)
 ax.plot(cost.R, cost.recall, 'o-', ms=3, lw=0.9, color=VERM, label='Recall')
 ax.plot(cost.R, cost.precision, 's--', ms=2.6, lw=0.9, color=BLUE, label='Precision')
 ax.set_xscale('log')
@@ -314,36 +330,48 @@ ax.set_xticks([1, 2, 5, 10, 20, 50])
 ax.set_xticklabels(['1', '2', '5', '10', '20', '50'])
 ax.minorticks_off()
 ax.set(xlabel='Cost ratio (miss : false alarm)', ylabel='Score', ylim=(0.5, 1.04))
-ax.legend(loc='lower left', fontsize=6.4); grid(ax)
-ax.annotate('20:1', xy=(20, 0.95), xytext=(9, 1.0), fontsize=6.2, color=PAL['neutral'],
+ax.legend(loc='lower left', fontsize=6.2); grid(ax)
+ax.annotate('20:1', xy=(20, 0.95), xytext=(9, 1.0), fontsize=6.0, color=PAL['neutral'],
             arrowprops=dict(arrowstyle='-', lw=0.5, color=PAL['neutral']))
+ax.text(14, 0.53, 'plausible range', fontsize=5.6, ha='center', color=PAL['neutral'])
 panel_label(ax, '(a)', x=-0.22)
 
 ax = axs[1]
-for f, c, lbl, ls in (('基础15', PAL['neutral_light'], 'Base', '-'), ('+熵+梯度', GREEN, '+E+G', '-')):
+for f, c, lbl in (('base', PAL['neutral_light'], 'Baseline'), ('entropy+gradient', GREEN, '+ descriptors')):
     d = sel[sel.feat == f]
-    ax.plot(d.coverage, d.miss_rate, 'o-', ms=3, lw=1.0, color=c, label=lbl, ls=ls)
+    ax.plot(d.coverage, d.miss_rate, 'o-', ms=3, lw=1.0, color=c, label=lbl)
 ax.axvline(0.9, ls=':', lw=0.7, color=GREY)
 ax.set(xlabel='Automatic coverage', ylabel='Miss rate', ylim=(-0.015, 0.30))
-ax.legend(loc='upper left', fontsize=6.4); grid(ax)
+ax.text(0.98, 0.965, 'n = 20 pore frames', transform=ax.transAxes, fontsize=5.8,
+        ha='right', va='top', color=PAL['neutral'])
+ax.legend(loc='upper left', fontsize=6.0); grid(ax)
 panel_label(ax, '(b)', x=-0.28)
 save(fig, 'fig6_decision'); plt.close(fig)
 
 # ---------------------------------------------------------------- Fig 7 SHAP
 imp = pd.read_csv('results/shap_importance.csv', index_col=0).iloc[:, 0].sort_values()
 bins = pd.read_csv('results/shap_bins.csv')
-fig, axs = plt.subplots(1, 2, figsize=(W, 2.30), gridspec_kw={'width_ratios': [1, 1], 'wspace': 0.45})
+NICE = {'hist_entropy': 'Histogram entropy', 'grad_mean': 'Mean gradient',
+        'grad_p99': '99th-pct gradient', 'std': 'Std. dev. of field',
+        'Tmax': 'Peak temperature', 'cc': 'Connected components',
+        'Time': 'Elapsed time', 'MP Ecc': 'Melt-pool eccentricity', 'MP_Ecc': 'Melt-pool eccentricity',
+        'p50': 'Median temperature', 'Y': 'Lateral position'}
+fig, axs = plt.subplots(1, 2, figsize=(W, 2.40), gridspec_kw={'width_ratios': [1, 1], 'wspace': 0.70})
 ax = axs[0]
 top = imp.tail(9).copy()
-top['Tmax'] = imp['Tmax']                      # show peak temperature for direct comparison
+if 'Tmax' not in top.index:
+    top['Tmax'] = imp['Tmax']
 top = top.sort_values()
 cols = [GREEN if n in ('hist_entropy', 'grad_mean', 'grad_p99') else PAL['neutral_light'] for n in top.index]
 ax.barh(range(len(top)), top.values, color=cols, edgecolor='none', height=0.68)
 ax.set_yticks(range(len(top)))
-ax.set_yticklabels([n.replace('_', ' ') for n in top.index], fontsize=6.6)
+ax.set_yticklabels([NICE.get(n, n) for n in top.index], fontsize=6.2)
 ax.set(xlabel='mean |SHAP|')
+from matplotlib.patches import Patch
+ax.legend(handles=[Patch(color=GREEN, label='This work'), Patch(color=PAL['neutral_light'], label='Baseline')],
+          loc='lower right', fontsize=5.6, handlelength=1.0)
 ax.grid(False); ax.set_axisbelow(True)
-panel_label(ax, '(a)', x=-0.36)
+panel_label(ax, '(a)', x=-0.50)
 
 ax = axs[1]
 for f, c, lbl, off in (('hist_entropy', GREEN, 'Entropy', -0.08),
@@ -353,7 +381,9 @@ for f, c, lbl, off in (('hist_entropy', GREEN, 'Entropy', -0.08),
     ax.plot(np.arange(1, len(d) + 1) + off, d.pos_rate * 100, 'o-', ms=3, lw=0.9, color=c, label=lbl)
 ax.set_xticks([1, 2, 3, 4, 5]); ax.set_xticklabels(['Q1', 'Q2', 'Q3', 'Q4', 'Q5'])
 ax.set(xlabel='Feature quintile', ylabel='Pore rate (%)', ylim=(-1, 27))
-ax.legend(loc='upper center', fontsize=6.2, ncol=1); grid(ax)
+ax.text(0.03, 0.95, 'Q1 holds 68 of 71\npore frames', transform=ax.transAxes, fontsize=5.6,
+        va='top', color=PAL['neutral'])
+ax.legend(loc='upper right', fontsize=6.0, ncol=1); grid(ax)
 panel_label(ax, '(b)', x=-0.26)
 save(fig, 'fig7_shap'); plt.close(fig)
 

@@ -39,15 +39,16 @@ uni = pd.read_csv('results/results_geometry_univariate.csv')
 ev = pd.read_csv('results/results_geometry_eval.csv')
 
 fig = plt.figure(figsize=(7.1, 2.75))
-gs = GridSpec(1, 4, width_ratios=[0.68, 0.68, 1.14, 1.04], wspace=0.80,
+gs = GridSpec(1, 4, width_ratios=[0.68, 0.68, 1.14, 1.04], wspace=0.95,
               left=0.03, right=0.985, bottom=0.19, top=0.85)
 
 # ---------------- (a) two frames with solidification isotherms ----------------
 ip = int(np.where((y == 1) & (g == 42))[0][0])
 inn = int(np.where((y == 0) & (g == 42))[0][0])
+axes_a = []
 for col, (k, ttl) in enumerate(((ip, 'pore frame'), (inn, 'no-pore frame'))):
-    ax = fig.add_subplot(gs[col])
-    ax.imshow(img[k], cmap='inferno', vmin=900, vmax=2000, interpolation='nearest')
+    ax = fig.add_subplot(gs[col]); axes_a.append(ax)
+    im = ax.imshow(img[k], cmap='inferno', vmin=900, vmax=2000, interpolation='nearest')
     ax.contour(img[k] > 1600, levels=[0.5], colors='#7FE7E0', linewidths=0.7)
     ax.contour(img[k] > 1660, levels=[0.5], colors='white', linewidths=0.7)
     p = max(regionprops(sk_label(img[k] > 1660)), key=lambda q: q.area)
@@ -58,6 +59,12 @@ for col, (k, ttl) in enumerate(((ip, 'pore frame'), (inn, 'no-pore frame'))):
         s.set_visible(False)
 fig.text(0.005, 0.90, '(a)', fontsize=8, weight='bold')
 fig.text(0.035, 0.90, 'liquidus 1660 °C  ·  solidus 1600 °C', fontsize=6.4, color=PAL['neutral'])
+p1, p2 = axes_a[0].get_position(), axes_a[1].get_position()
+cax = fig.add_axes([p1.x0 + 0.02, p1.y0 - 0.135, (p2.x1 - p1.x0) * 0.72, 0.018])
+cb = fig.colorbar(im, cax=cax, orientation='horizontal')
+cb.set_label('Temperature (°C)', fontsize=6.0, labelpad=1.5)
+cb.ax.tick_params(labelsize=5.6, length=1.6, width=0.5)
+cb.outline.set_linewidth(0.4)
 
 # ---------------- (b) univariate discriminability ----------------
 ax = fig.add_subplot(gs[2])
@@ -72,10 +79,22 @@ colmap = {**{k: PAL['vermillion'] for k in desc.feature},
           **{k: PAL['neutral_light'] for k in base.feature}}
 yy = np.arange(len(sel))
 ax.hlines(yy, 0, sel.s.values, color=[colmap[f] for f in sel.feature], lw=1.0, alpha=0.55)
+NICE = {'hist_entropy': 'Histogram entropy', 'grad_mean': 'Mean gradient', 'grad_p99': '99th-pct gradient',
+        'geo_len': 'Pool length', 'geo_wid': 'Pool width', 'geo_ar': 'Aspect ratio',
+        'geo_area': 'Pool area', 'geo_perim': 'Perimeter', 'geo_circ': 'Circularity',
+        'geo_solidity': 'Solidity', 'geo_mushy': 'Mushy-zone ratio',
+        'geo_G_mushy': 'Mushy grad.', 'geo_asym': 'Trailing asymmetry',
+        'geo_peak_off': 'Peak offset', 'MP_Area': 'MP area (released)', 'MP_Ecc': 'MP eccentricity',
+        'Tmax': 'Peak temperature', 'p99': '99th-pct temperature'}
+DESC_SET = set(desc.feature); GEO_SET = set(geom.feature)
+def shape(f):
+    if f in DESC_SET: return 'o'
+    if f in GEO_SET: return 's'
+    return '^'
 for i, (_, r) in enumerate(sel.iterrows()):
-    ax.plot(r.s, i, 'o', ms=4.2, color=colmap[r.feature], mec='white', mew=0.4, zorder=3)
+    ax.plot(r.s, i, shape(r.feature), ms=4.2, color=colmap[r.feature], mec='white', mew=0.4, zorder=3)
 ax.set_yticks(yy)
-ax.set_yticklabels([f.replace('geo_', '') for f in sel.feature], fontsize=6.3)
+ax.set_yticklabels([NICE.get(f, f) for f in sel.feature], fontsize=6.3)
 for t, f in zip(ax.get_yticklabels(), sel.feature):
     t.set_color(colmap[f])
 ax.set_ylim(-0.7, len(sel) - 0.3)
@@ -98,9 +117,11 @@ ax.set_xticklabels(lab, fontsize=6.2, rotation=24, ha='right', rotation_mode='an
 ax.set_xlabel('added to the baseline set', fontsize=6.8, labelpad=1)
 ax.set_ylim(0.78, 1.0)
 ax.set_ylabel('PR-AUC, forward chaining', fontsize=6.8)
-ax.axhline(ev[(ev.model == 'Cat') & (ev.feats == 'base')].forward.values[0],
-           color=PAL['neutral_light'], lw=0.7, ls=':', zorder=1)
-ax.legend(loc='upper left', ncol=2, fontsize=6.3, handletextpad=0.3, columnspacing=0.9)
+base_v = ev[(ev.model == 'Cat') & (ev.feats == 'base')].forward.values[0]
+ax.axhline(base_v, color=PAL['grey'], lw=0.7, ls=(0, (1, 2)), zorder=1)
+ax.text(3.45, base_v - 0.006, 'baseline', fontsize=5.4, color=PAL['neutral'], ha='right', va='top')
+ax.legend(loc='upper left', ncol=2, fontsize=5.8, handletextpad=0.25, columnspacing=0.6,
+          bbox_to_anchor=(0.0, 1.02))
 panel_label(ax, '(c)', x=-0.24, y=1.02)
 
 save(fig, 'fig_geometry')
