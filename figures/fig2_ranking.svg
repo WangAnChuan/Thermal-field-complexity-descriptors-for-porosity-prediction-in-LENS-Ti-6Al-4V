@@ -718,4 +718,9 @@ L 329.195728 177.13776
    <rect x="315.515728" y="26.852123" width="192.684032" height="164.419012"/>
   </clipPath>
  </defs>
+<path d="M 329.2 47.0 L 411.9 55.7 L 494.5 45.1" style="fill: none; stroke: #6E6E6E; stroke-width: 0.9; stroke-dasharray: 3 1.6"/>
+<rect x="327.5" y="45.3" width="3.4" height="3.4" style="fill: none; stroke: #6E6E6E; stroke-width: 0.9"/>
+<rect x="410.2" y="54.0" width="3.4" height="3.4" style="fill: none; stroke: #6E6E6E; stroke-width: 0.9"/>
+<rect x="492.8" y="43.4" width="3.4" height="3.4" style="fill: none; stroke: #6E6E6E; stroke-width: 0.9"/>
+<text x="348" y="36" style="font-size: 5.6px; fill: #6E6E6E; font-family: 'Liberation Serif', serif" text-anchor="start">accuracy (CatBoost)</text>
 </svg>
