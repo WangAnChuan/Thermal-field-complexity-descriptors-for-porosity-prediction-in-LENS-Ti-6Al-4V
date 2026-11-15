@@ -100,22 +100,18 @@ The descriptors describe the field around the pool, not the pool outline.
 │   ├── 13a_shap.py
 │   ├── 13b_shap_excluding_first_layers.py
 │   ├── 14_cnn.py
-│   ├── 15_figures.py
 │   ├── 16_controls.py           # permutation / projection / moment controls
 │   ├── 17_controls_paired.py    # complexity vs moments, 21 splits
 │   ├── 18_protocol_position_holdout.py  # protocol, positional ablation, held-out layers
 │   ├── 19_entropy_robustness.py
 │   ├── 20_pore_size.py
-│   ├── 21_figures.py
 │   ├── 22_pool_geometry.py      # physics-informed geometry vs the descriptors
 │   ├── 23_protocol_transfer.py  # PTR across feature blocks
 │   ├── 24_ptr_permutation.py    # permutation null for the PTR experiment
-│   ├── 25_figure_geometry.py
 │   ├── 26_transfer_gate.py      # permutation gate for the PTR denominator
 │   └── 27_ptr_calibration.py    # estimator calibration on synthetic data
 ├── tests/test_claims.py         # regression tests: every reported number
 ├── results/                     # generated tables (tracked, small)
-├── figures/                     # generated figures
 ├── Makefile
 └── requirements.txt
 ```
@@ -143,7 +139,6 @@ Run a single stage:
 ```bash
 make data        # parse the 1564 CSV frames
 make ablations   # feature ablation tables
-make figures     # regenerate all six figures
 make test        # verify the reported numbers
 ```
 

@@ -18,4 +18,4 @@ venv/
 .DS_Store
 Thumbs.db
 
-# Figures are small and tracked; results tables are tracked deliberately.
+# Result tables are tracked deliberately.

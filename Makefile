@@ -4,9 +4,9 @@
 
 PY ?= python
 
-.PHONY: all data baselines protocols ablations stability robustness reproduction uncertainty interpretability controls protocol_position entropy_robustness pore_size geometry transfer cnn figures test clean
+.PHONY: all data baselines protocols ablations stability robustness reproduction uncertainty interpretability controls protocol_position entropy_robustness pore_size geometry transfer cnn test clean
 
-all: data baselines protocols ablations stability robustness reproduction uncertainty interpretability controls protocol_position entropy_robustness pore_size geometry transfer cnn figures test
+all: data baselines protocols ablations stability robustness reproduction uncertainty interpretability controls protocol_position entropy_robustness pore_size geometry transfer cnn test
 
 data:
 	$(PY) experiments/01_build_cache.py
@@ -65,12 +65,8 @@ controls:
 cnn:
 	$(PY) experiments/14_cnn.py
 
-figures:
-	$(PY) experiments/21_figures.py
-	$(PY) experiments/25_figure_geometry.py
-
 test:
 	$(PY) tests/test_claims.py
 
 clean:
-	rm -rf results/*.csv results/*.json figures/*.png
+	rm -rf results/*.csv results/*.json
