@@ -1,0 +1,18 @@
+Frame,Layer,Time,Y,Z,Tmax,MP_Area,MP_Eccentricity,True_Label,Pred_Prob,Pred_Label,Category,True_Size_mm,Pred_Size_mm,Physical_Attribution
+7,1,0.9146,11.62,0.0,1763.0,1744.0,0.2871217255177687,0,0.7537,1,FP,0.0,0.2609,Boundary heat-sink dissipation fluctuation
+27,2,8.079,5.808,0.51,1757.0,1441.0,0.35932552967541,0,0.662,1,FP,0.0,0.2578,Boundary heat-sink dissipation fluctuation
+33,2,8.994,17.42,0.51,1682.0,416.0,0.2997630627286934,0,0.5963,1,FP,0.0,0.2292,Severe thermal dip (Tmax < 1720C) without void formation
+34,2,9.146,19.36,0.51,1727.0,799.0,0.3238848899730429,0,0.5051,1,FP,0.0,0.2003,Boundary heat-sink dissipation fluctuation
+40,2,10.06,30.97,0.51,1712.0,687.0,0.4295117347096806,1,0.1752,0,FN,0.2769922879177378,0.1615,Transient keyhole fluctuation with rapid surface refilling
+41,2,10.21,32.91,0.51,1712.0,640.0,0.4243167396268441,0,0.5979,1,FP,0.0,0.1623,Severe thermal dip (Tmax < 1720C) without void formation
+53,3,16.16,1.936,1.02,1723.0,915.0,0.5360101850673175,0,0.5859,1,FP,0.0,0.3042,Boundary heat-sink dissipation fluctuation
+84,4,25.61,11.62,1.53,1778.0,1579.0,0.4870949952713452,0,0.5122,1,FP,0.0,0.2857,Boundary heat-sink dissipation fluctuation
+86,4,25.91,15.49,1.53,1750.0,1165.0,0.4999052901126851,0,0.6934,1,FP,0.0,0.2908,Boundary heat-sink dissipation fluctuation
+160,7,49.24,0.0,3.06,1757.0,1246.0,0.5393431756432566,0,0.5677,1,FP,0.0,0.3609,Boundary heat-sink dissipation fluctuation
+220,9,66.77,5.808,4.08,1796.0,1655.0,0.2235409239086997,0,0.5534,1,FP,0.0,0.3259,Boundary heat-sink dissipation fluctuation
+348,14,104.0,0.0,6.63,1794.0,1587.0,0.5258868977620051,0,0.5231,1,FP,0.0,0.2951,Boundary heat-sink dissipation fluctuation
+419,17,124.8,0.0,8.16,1818.0,1802.0,0.1989113616993197,0,0.5256,1,FP,0.0,0.3758,Boundary heat-sink dissipation fluctuation
+1030,38,293.9,54.21,18.87,1613.0,0.0,0.0,0,0.5789,1,FP,0.0,0.946,Severe thermal dip (Tmax < 1720C) without void formation
+1178,44,338.7,48.4,21.93,1602.0,0.0,0.0,0,0.7278,1,FP,0.0,0.9574,Severe thermal dip (Tmax < 1720C) without void formation
+1446,56,424.4,0.0,28.05,1762.0,799.0,0.439120314439983,1,0.4318,0,FN,0.9695372750642673,0.98,High-layer thermal accumulation masking localized under-melting
+1490,57,434.0,44.53,28.56,1642.0,3.0,0.816496580927726,0,0.769,1,FP,0.0,0.948,Severe thermal dip (Tmax < 1720C) without void formation

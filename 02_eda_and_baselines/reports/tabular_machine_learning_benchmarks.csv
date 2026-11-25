@@ -1,0 +1,7 @@
+Model,ROC-AUC,PR-AUC (AP),Recall (Sens),Precision,F1-Score (Th=0.5),Optimal F1 (Th),Specificity,False Alarm Rate (FAR)
+Logistic Regression (Balanced),0.8174,0.2995,0.7746,0.1259,0.2165,0.3942 (0.71),0.7441,0.2559
+Support Vector Machine (RBF),0.9827,0.7769,0.6197,0.7458,0.6769,0.7324 (0.41),0.99,0.01
+Random Forest (Balanced),0.9859,0.813,0.7324,0.7879,0.7591,0.8056 (0.38),0.9906,0.0094
+HistGradientBoosting,0.9897,0.7895,0.7746,0.7746,0.7746,0.7778 (0.10),0.9893,0.0107
+XGBoost (Cost-Sensitive),0.985,0.8012,0.9014,0.7442,0.8153,0.8366 (0.63),0.9853,0.0147
+LightGBM (Cost-Sensitive),0.9778,0.8202,0.8732,0.7561,0.8105,0.8252 (0.81),0.9866,0.0134

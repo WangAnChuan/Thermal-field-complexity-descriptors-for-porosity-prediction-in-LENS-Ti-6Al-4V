@@ -1,0 +1,7 @@
+Feature,Normal Mean±Std,Normal Median(IQR),Porous Mean±Std,Porous Median(IQR),Mann-Whitney p-val,Welch t-val,Cohen's d,Direction
+MP Area,736.94 ± 249.00,705.00 (301.00),787.61 ± 927.77,613.00 (602.50),4.07e-02 (*),6.47e-01,0.162,Elevated in Pore
+MP Eccentricity,0.47 ± 0.09,0.48 (0.12),0.50 ± 0.20,0.43 (0.26),1.15e-01 (n.s.),1.88e-01,0.313,Elevated in Pore
+Tmax,1777.24 ± 47.76,1775.00 (70.00),1734.11 ± 68.08,1717.00 (56.00),1.19e-14 (***),1.29e-06,-0.883,Suppressed in Pore
+Z (mm),15.13 ± 8.50,14.79 (14.28),6.41 ± 9.21,0.51 (10.96),8.27e-17 (***),2.41e-11,-1.023,Suppressed in Pore
+Y (mm),24.61 ± 15.10,23.23 (25.16),27.46 ± 19.54,29.04 (35.82),2.57e-01 (n.s.),2.30e-01,0.186,Elevated in Pore
+Layer,30.67 ± 16.67,30.00 (28.00),13.56 ± 18.06,2.00 (21.50),8.27e-17 (***),2.41e-11,-1.023,Suppressed in Pore

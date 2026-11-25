@@ -1,0 +1,4 @@
+Model,ROC-AUC (%),PR-AUC (%),F1-Score,Optimal Th,Recall (%),Precision (%),Specificity (%),False Alarm Rate (FAR) (%),Pore Size MAE (mm),Pore Size R2,Params (M),Latency (ms),Throughput (FPS),Total 5-Fold Time (s)
+PyroNet-2D (Tian et al. 2020),95.11,73.25,0.6627,0.443,78.87,57.14,97.19,2.81,0.0944,0.802,0.43,0.7,1425.7,352.6
+ResNet-18 (Standard Vision Baseline),99.57,86.97,0.8844,0.545,91.55,85.53,99.26,0.74,0.0694,0.9125,11.25,1.99,503.7,415.9
+Thermal-Mamba (Proposed Architecture),98.86,89.8,0.8286,0.588,81.69,84.06,99.26,0.74,0.087,0.8486,0.41,2.28,438.8,445.3

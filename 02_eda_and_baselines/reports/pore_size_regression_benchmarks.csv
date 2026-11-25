@@ -1,0 +1,4 @@
+Regressor Model,MAE (mm),RMSE (mm),R2 Score,Mean Target Size (mm)
+Ridge Regression,0.1393,0.1981,0.6408,0.5374
+Random Forest Regressor,0.0176,0.0661,0.96,0.5374
+Gradient Boosting Regressor,0.0162,0.066,0.9601,0.5374

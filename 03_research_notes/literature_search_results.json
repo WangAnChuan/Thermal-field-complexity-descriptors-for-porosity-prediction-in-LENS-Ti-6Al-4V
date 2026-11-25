@@ -1,0 +1,135 @@
+[
+  {
+    "category": "1. 导师经典代表作：郭维红（Weihong Guo）团队在金属增材制造/熔池监测的核心成果",
+    "query": "additive manufacturing OR porosity OR melt pool OR deposition",
+    "papers": []
+  },
+  {
+    "category": "2. DED/LENS 激光定向能量沉积原位熔池监测与孔隙缺陷检测前沿基准（SOTA）",
+    "query": "directed energy deposition melt pool in-situ porosity prediction thermal pyrometer",
+    "papers": [
+      {
+        "title": "Directed Energy Deposition (DED) Process: State of the Art",
+        "year": 2021,
+        "authors": [
+          "Dong‐Gyu Ahn"
+        ],
+        "venue": "International Journal of Precision Engineering and Manufacturing-Green Technology",
+        "doi": "https://doi.org/10.1007/s40684-020-00302-7",
+        "citations": 1024,
+        "abstract": "Metal additive manufacturing technologies, such as powder bed fusion process, directed energy deposition (DED) process, sheet lamination process, etc., are one of promising flexible manufacturing technologies due to direct fabrication characteristics of a metallic freeform with a three-dimensional shape from computer aided design data. DED processes can create an arbitrary shape on even and uneven substrates through line-by-line deposition of a metallic material. Theses DED processes can easily ..."
+      },
+      {
+        "title": "Process defects and in situ monitoring methods in metal powder bed fusion: a review",
+        "year": 2017,
+        "authors": [
+          "Marco Grasso",
+          "Bianca Maria Colosimo"
+        ],
+        "venue": "Measurement Science and Technology",
+        "doi": "https://doi.org/10.1088/1361-6501/aa5c4f",
+        "citations": 1001,
+        "abstract": "Despite continuous technological enhancements of metal Additive Manufacturing (AM) systems, the lack of process repeatability and stability still represents a barrier for the industrial breakthrough. The most relevant metal AM applications currently involve industrial sectors (e.g. aerospace and bio-medical) where defects avoidance is fundamental. Because of this, there is the need to develop novel in situ monitoring tools able to keep under control the stability of the process on a layer-by-lay..."
+      },
+      {
+        "title": "Machine learning in additive manufacturing: State-of-the-art and perspectives",
+        "year": 2020,
+        "authors": [
+          "Chengcheng Wang",
+          "Xipeng Tan",
+          "Shu Beng Tor",
+          "C.S. Lim"
+        ],
+        "venue": "Additive manufacturing",
+        "doi": "https://doi.org/10.1016/j.addma.2020.101538",
+        "citations": 958,
+        "abstract": "No abstract available."
+      },
+      {
+        "title": "Current Status and Perspectives on Wire and Arc Additive Manufacturing (WAAM)",
+        "year": 2019,
+        "authors": [
+          "Tiago A. Rodrigues",
+          "Valdemar Rebelo Duarte",
+          "Rosa Maria Miranda",
+          "Telmo G. Santos",
+          "J.P. Oliveira"
+        ],
+        "venue": "Materials",
+        "doi": "https://doi.org/10.3390/ma12071121",
+        "citations": 932,
+        "abstract": "Additive manufacturing has revolutionized the manufacturing paradigm in recent years due to the possibility of creating complex shaped three-dimensional parts which can be difficult or impossible to obtain by conventional manufacturing processes. Among the different additive manufacturing techniques, wire and arc additive manufacturing (WAAM) is suitable to produce large metallic parts owing to the high deposition rates achieved, which are significantly larger than powder-bed techniques, for exa..."
+      },
+      {
+        "title": "State of the Art in Directed Energy Deposition: From Additive Manufacturing to Materials Design",
+        "year": 2019,
+        "authors": [
+          "Adrita Dass",
+          "Atieh Moridi"
+        ],
+        "venue": "Coatings",
+        "doi": "https://doi.org/10.3390/coatings9070418",
+        "citations": 820,
+        "abstract": "Additive manufacturing (AM) is a new paradigm for the design and production of high-performance components for aerospace, medical, energy, and automotive applications. This review will exclusively cover directed energy deposition (DED)-AM, with a focus on the deposition of powder-feed based metal and alloy systems. This paper provides a comprehensive review on the classification of DED systems, process variables, process physics, modelling efforts, common defects, mechanical properties of DED pa..."
+      },
+      {
+        "title": "A review on machine learning in 3D printing: applications, potential, and challenges",
+        "year": 2020,
+        "authors": [
+          "Guo Dong Goh",
+          "Swee Leong Sing",
+          "Wai Yee Yeong"
+        ],
+        "venue": "Artificial Intelligence Review",
+        "doi": "https://doi.org/10.1007/s10462-020-09876-9",
+        "citations": 754,
+        "abstract": "No abstract available."
+      },
+      {
+        "title": "Research and application of machine learning for additive manufacturing",
+        "year": 2022,
+        "authors": [
+          "Jian Qin",
+          "Fu Yuan Hu",
+          "Ying Liu",
+          "Paul Witherell",
+          "Charlie C. L. Wang"
+        ],
+        "venue": "Additive manufacturing",
+        "doi": "https://doi.org/10.1016/j.addma.2022.102691",
+        "citations": 524,
+        "abstract": "Additive manufacturing (AM) is poised to bring a revolution due to its unique production paradigm. It offers the prospect of mass customization, flexible production, on-demand and decentralized manufacturing. However, a number of challenges stem from not only the complexity of manufacturing systems but the demand for increasingly complex and high-quality products, in terms of design principles, standardization and quality control. These challenges build up barriers to the widespread adoption of ..."
+      },
+      {
+        "title": "In-situ sensing, process monitoring and machine control in Laser Powder Bed Fusion: A review",
+        "year": 2021,
+        "authors": [
+          "R. McCann",
+          "Muhannad Ahmed Obeidi",
+          "Cian Hughes",
+          "Éanna McCarthy",
+          "Darragh S. Egan"
+        ],
+        "venue": "Additive manufacturing",
+        "doi": "https://doi.org/10.1016/j.addma.2021.102058",
+        "citations": 488,
+        "abstract": "Process monitoring and sensing is widely used across many industries for quality assurance, and for increasing machine uptime and reliability. Though still in the emergent stages, process monitoring is beginning to see strong adoption in the additive manufacturing community through the use of process sensors recording a wide range of optical, acoustic and thermal signals. The ability to acquire these signals in a holistic manner, coupled with intelligence-based machine control has the potential ..."
+      }
+    ]
+  },
+  {
+    "category": "3. 物理信息引导（PINN / Physics-Informed / 传热机理）与增材制造缺陷预测",
+    "query": "physics-informed neural network metal additive manufacturing melt pool porosity",
+    "papers": []
+  },
+  {
+    "category": "4. 增材制造中的时空建模、长程序列记忆与多模态数据融合（Spatiotemporal & Multimodal Fusion）",
+    "query": "spatiotemporal deep learning melt pool thermal history additive manufacturing fusion",
+    "papers": []
+  },
+  {
+    "category": "5. 极端不平衡样本学习（Class Imbalance / Cost-Sensitive / Rare Defect Detection）在制造中的前沿方案",
+    "query": "imbalanced data rare defect detection additive manufacturing contrastive learning",
+    "papers": []
+  }
+]

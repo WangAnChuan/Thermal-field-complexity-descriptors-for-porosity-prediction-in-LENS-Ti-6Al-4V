@@ -1,0 +1,19 @@
+Model,Severity Category,Total Pores Evaluated,Recall (%),Size MAE (mm),Size Max Error (mm)
+Ablation: Naive Concat Fusion,Medium LoF (0.30-0.60mm),15,86.67,0.0183,0.1035
+Ablation: Naive Concat Fusion,Micro LoF (<0.30mm),18,100.0,0.0456,0.2815
+Ablation: Naive Concat Fusion,Severe LoF (>=0.60mm),18,94.44,0.082,0.5093
+Ablation: Single-Scale Stem,Medium LoF (0.30-0.60mm),15,100.0,0.1515,0.3447
+Ablation: Single-Scale Stem,Micro LoF (<0.30mm),18,88.89,0.1035,0.2873
+Ablation: Single-Scale Stem,Severe LoF (>=0.60mm),18,83.33,0.2529,0.9702
+Ablation: Standard BCE Loss,Medium LoF (0.30-0.60mm),15,100.0,0.0866,0.2612
+Ablation: Standard BCE Loss,Micro LoF (<0.30mm),18,88.89,0.0848,0.3792
+Ablation: Standard BCE Loss,Severe LoF (>=0.60mm),18,88.89,0.2135,0.7213
+Ablation: Weighted BCE Loss,Medium LoF (0.30-0.60mm),15,93.33,0.0846,0.2233
+Ablation: Weighted BCE Loss,Micro LoF (<0.30mm),18,100.0,0.1203,0.4145
+Ablation: Weighted BCE Loss,Severe LoF (>=0.60mm),18,100.0,0.1282,0.574
+CNN-BiLSTM (LRCN Temporal Baseline),Medium LoF (0.30-0.60mm),15,93.33,0.081,0.3287
+CNN-BiLSTM (LRCN Temporal Baseline),Micro LoF (<0.30mm),18,94.44,0.0708,0.3101
+CNN-BiLSTM (LRCN Temporal Baseline),Severe LoF (>=0.60mm),18,94.44,0.0846,0.4789
+Thermal-Mamba (3-Task with Localization),Medium LoF (0.30-0.60mm),15,100.0,0.0597,0.2027
+Thermal-Mamba (3-Task with Localization),Micro LoF (<0.30mm),18,100.0,0.0972,0.2656
+Thermal-Mamba (3-Task with Localization),Severe LoF (>=0.60mm),18,94.44,0.1296,0.6737
