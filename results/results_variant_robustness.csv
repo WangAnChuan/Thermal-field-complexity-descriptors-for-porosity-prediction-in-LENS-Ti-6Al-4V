@@ -1,0 +1,11 @@
+model,variant,base_fwd,ext_fwd,delta
+Cat,base,0.814,0.965,0.151
+Cat,crop80,0.814,0.957,0.143
+Cat,crop60,0.814,0.947,0.133
+Cat,down2,0.814,0.951,0.137
+Cat,hotmask,0.814,0.976,0.162
+XGB,base,0.79,0.927,0.137
+XGB,crop80,0.79,0.929,0.14
+XGB,crop60,0.79,0.916,0.126
+XGB,down2,0.79,0.863,0.074
+XGB,hotmask,0.79,0.949,0.16

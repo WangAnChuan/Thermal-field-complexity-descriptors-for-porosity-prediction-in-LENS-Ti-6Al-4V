@@ -1,0 +1,10 @@
+variant,descriptor,spearman
+crop80,entropy,0.965
+crop80,grad_mean,0.945
+crop80,grad_p99,0.574
+crop60,entropy,0.675
+crop60,grad_mean,0.535
+crop60,grad_p99,0.441
+down2,entropy,0.595
+down2,grad_mean,0.829
+down2,grad_p99,0.394

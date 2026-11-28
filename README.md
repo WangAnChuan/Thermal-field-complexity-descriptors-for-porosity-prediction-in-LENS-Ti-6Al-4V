@@ -109,7 +109,10 @@ The descriptors describe the field around the pool, not the pool outline.
 │   ├── 23_protocol_transfer.py  # PTR across feature blocks
 │   ├── 24_ptr_permutation.py    # permutation null for the PTR experiment
 │   ├── 26_transfer_gate.py      # permutation gate for the PTR denominator
-│   └── 27_ptr_calibration.py    # estimator calibration on synthetic data
+│   ├── 27_ptr_calibration.py    # estimator calibration on synthetic data
+│   ├── 33_descriptor_variants.py # field-of-view, resolution, background variants
+│   ├── 34_leave_one_out.py      # leave-one-positive-out spread of the forward gain
+│   └── 35_selection_free.py     # descriptors chosen on i.i.d. data, scored under forward chaining
 ├── tests/test_claims.py         # regression tests: every reported number
 ├── results/                     # generated tables (tracked, small)
 ├── Makefile

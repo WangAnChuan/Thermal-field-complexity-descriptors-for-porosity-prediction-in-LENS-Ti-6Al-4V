@@ -4,9 +4,9 @@
 
 PY ?= python
 
-.PHONY: all data baselines protocols ablations stability robustness reproduction uncertainty interpretability controls protocol_position entropy_robustness pore_size geometry transfer cnn test clean
+.PHONY: all data baselines protocols ablations stability robustness reproduction uncertainty interpretability controls protocol_position entropy_robustness pore_size geometry transfer variants loo selection cnn test clean
 
-all: data baselines protocols ablations stability robustness reproduction uncertainty interpretability controls protocol_position entropy_robustness pore_size geometry transfer cnn test
+all: data baselines protocols ablations stability robustness reproduction uncertainty interpretability controls protocol_position entropy_robustness pore_size geometry transfer variants loo selection cnn test
 
 data:
 	$(PY) experiments/01_build_cache.py
@@ -61,6 +61,15 @@ transfer:
 controls:
 	$(PY) experiments/16_controls.py
 	$(PY) experiments/17_controls_paired.py
+
+variants:
+	$(PY) experiments/33_descriptor_variants.py
+
+loo:
+	$(PY) experiments/34_leave_one_out.py
+
+selection:
+	$(PY) experiments/35_selection_free.py
 
 cnn:
 	$(PY) experiments/14_cnn.py

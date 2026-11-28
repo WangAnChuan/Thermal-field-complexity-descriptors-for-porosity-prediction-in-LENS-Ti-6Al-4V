@@ -19,3 +19,11 @@ venv/
 Thumbs.db
 
 # Result tables are tracked deliberately.
+
+# CatBoost training logs
+catboost_info/
+
+# LaTeX build residue
+main.log
+main.tex
+main.aux
